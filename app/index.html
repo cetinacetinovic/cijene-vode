@@ -1,0 +1,772 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Cijena vode — test dizajn</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    color-scheme: light;
+    --page:#f9f9f7; --surface:#fcfcfb; --surface-raised:#ffffff;
+    --ink:#0b0b0b; --ink-2:#52514e; --ink-muted:#898781;
+    --line:#e1e0d9; --line-strong:#c3c2b7; --border:rgba(11,11,11,.10);
+    --accent:#1baf7a; --accent-soft:#dff3ea; --accent-ink:#0b6b46;
+    --series-1:#2a78d6; --series-2:#eb6834; --series-3:#1baf7a; --series-4:#eda100;
+    --series-5:#e87ba4; --series-6:#008300; --series-7:#4a3aa7; --series-8:#e34948;
+    --good:#006300; --critical:#d03b3b;
+    --promo:#c2410c; --promo-soft:#ffedd5; --promo-ink:#9a3412;
+    --yellow-soft:#fef3c7; --yellow-ink:#92700a;
+    --zebra:#f5f5f1; --head-bg:#f1f1ec;
+    --shadow: 0 1px 2px rgba(11,11,11,.04), 0 8px 24px -12px rgba(11,11,11,.12);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      color-scheme: dark;
+      --page:#0d0d0d; --surface:#161615; --surface-raised:#1c1c1a;
+      --ink:#f6f5f2; --ink-2:#c3c2b7; --ink-muted:#8f8d86;
+      --line:#2c2c2a; --line-strong:#3a3a37; --border:rgba(255,255,255,.10);
+      --accent:#3fd69a; --accent-soft:#123326; --accent-ink:#7fe8bb;
+      --series-1:#3987e5; --series-2:#d95926; --series-3:#199e70; --series-4:#c98500;
+      --series-5:#d55181; --series-6:#3fbf3f; --series-7:#9085e9; --series-8:#e66767;
+      --good:#0ca30c; --critical:#ff8a7a;
+      --promo:#fb923c; --promo-soft:#431407; --promo-ink:#fdba74;
+      --yellow-soft:#3f2e05; --yellow-ink:#facc15;
+      --zebra:#212120; --head-bg:#242422;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 12px 32px -16px rgba(0,0,0,.6);
+    }
+  }
+  :root[data-theme="dark"]{
+    color-scheme: dark;
+    --page:#0d0d0d; --surface:#161615; --surface-raised:#1c1c1a;
+    --ink:#f6f5f2; --ink-2:#c3c2b7; --ink-muted:#8f8d86;
+    --line:#2c2c2a; --line-strong:#3a3a37; --border:rgba(255,255,255,.10);
+    --accent:#3fd69a; --accent-soft:#123326; --accent-ink:#7fe8bb;
+    --series-1:#3987e5; --series-2:#d95926; --series-3:#199e70; --series-4:#c98500;
+    --series-5:#d55181; --series-6:#3fbf3f; --series-7:#9085e9; --series-8:#e66767;
+    --good:#0ca30c; --critical:#ff8a7a;
+    --promo:#fb923c; --promo-soft:#431407; --promo-ink:#fdba74;
+      --zebra:#212120; --head-bg:#242422;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 12px 32px -16px rgba(0,0,0,.6);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    background:var(--page); color:var(--ink);
+    font-family:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1180px; margin:0 auto; padding:40px 24px 80px;}
+  .eyebrow{
+    font-family:"IBM Plex Mono", monospace; font-size:12px; letter-spacing:.09em;
+    text-transform:uppercase; color:var(--accent-ink); font-weight:600;
+    display:flex; align-items:center; gap:8px;
+  }
+  .eyebrow::before{content:""; width:6px; height:6px; border-radius:50%; background:var(--accent); display:inline-block;}
+  h1{
+    font-family:"Fraunces", Georgia, serif; font-weight:600; font-size:clamp(32px,4.4vw,50px);
+    line-height:1.05; letter-spacing:-.01em; margin:10px 0 12px; text-wrap:balance;
+  }
+  .lede{ color:var(--ink-2); font-size:16px; line-height:1.55; max-width:62ch; margin:0 0 32px;}
+  .lede a{ color:var(--accent-ink); text-decoration-color:var(--border);}
+
+  .hero{
+    display:flex; flex-wrap:wrap; gap:14px; align-items:stretch; margin-bottom:36px;
+  }
+  .hero-main{
+    background:var(--surface-raised); border:1px solid var(--border); border-radius:14px;
+    padding:22px 26px; box-shadow:var(--shadow); flex:1 1 260px; min-width:240px;
+  }
+  .hero-label{font-size:12.5px; color:var(--ink-muted); font-weight:500;}
+  .hero-value{
+    font-family:"Fraunces", Georgia, serif; font-weight:600; font-variant-numeric:tabular-nums;
+    font-size:44px; letter-spacing:-.01em; margin-top:2px; display:flex; align-items:baseline; gap:8px;
+  }
+  .hero-value small{font-family:"IBM Plex Sans",sans-serif; font-size:16px; font-weight:500; color:var(--ink-muted);}
+  .hero-sub{font-size:12.5px; color:var(--ink-muted); margin-top:6px;}
+  .hero-tiles{ display:flex; flex-direction:column; gap:10px; width:100%;}
+  .price-tile-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(126px,1fr)); gap:8px;}
+  .price-tile{
+    background:var(--page); border:1px solid var(--border); border-radius:10px;
+    padding:10px 12px; min-width:0;
+  }
+  .price-tile-name{
+    font-size:11.5px; color:var(--ink-muted); font-weight:600; white-space:nowrap;
+    overflow:hidden; text-overflow:ellipsis; letter-spacing:.01em;
+  }
+  .price-tile-value{
+    font-family:"Fraunces", Georgia, serif; font-weight:600; font-size:21px;
+    font-variant-numeric:tabular-nums; margin-top:2px; letter-spacing:-.01em;
+  }
+  .price-tile-sub{ font-size:11px; color:var(--ink-muted); margin-top:3px; font-variant-numeric:tabular-nums;}
+  .price-tiles-omitted{ font-size:11.5px; color:var(--ink-muted);}
+  .delta-card{
+    background:var(--surface-raised); border:1px solid var(--border); border-radius:14px;
+    padding:18px 20px; box-shadow:var(--shadow); flex:1 1 180px; min-width:170px;
+    display:flex; flex-direction:column; justify-content:center; gap:6px;
+  }
+  .delta-card .hero-label{margin-bottom:0;}
+  .delta-row{display:flex; align-items:center; gap:8px;}
+  .delta-pill{
+    font-family:"IBM Plex Mono",monospace; font-size:14px; font-weight:600;
+    font-variant-numeric:tabular-nums; padding:2px 8px; border-radius:999px;
+  }
+  .delta-up{ color:var(--critical); background:color-mix(in srgb, var(--critical) 14%, transparent);}
+  .delta-down{ color:var(--good); background:color-mix(in srgb, var(--good) 14%, transparent);}
+  .delta-flat{ color:var(--ink-muted); background:var(--line);}
+  .delta-context{font-size:12.5px; color:var(--ink-muted);}
+  .hero-range{ display:flex; align-items:center; gap:6px; margin-top:10px; }
+  .hero-range select{ padding:5px 8px; border-radius:8px; font-size:12px; max-width:46%; }
+
+  .panel{
+    background:var(--surface-raised); border:1px solid var(--border); border-radius:14px;
+    box-shadow:var(--shadow); padding:22px 24px; margin-bottom:22px;
+  }
+  .panel-head{ display:flex; align-items:baseline; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:4px;}
+  .panel-title{font-size:15px; font-weight:600;}
+  .panel-note{font-size:12.5px; color:var(--ink-muted);}
+
+  .filters{
+    display:flex; flex-wrap:wrap; gap:10px 12px; align-items:center; margin-bottom:22px;
+  }
+  .search{
+    position:relative; flex:1 1 220px; min-width:180px;
+  }
+  .search input{
+    width:100%; padding:10px 12px 10px 34px; border-radius:10px; border:1px solid var(--line-strong);
+    background:var(--surface-raised); color:var(--ink); font-size:14px; font-family:inherit;
+  }
+  .search input:focus{outline:2px solid var(--accent); outline-offset:1px;}
+  .search svg{position:absolute; left:11px; top:50%; transform:translateY(-50%); width:15px; height:15px; color:var(--ink-muted);}
+  select{
+    padding:9px 12px; border-radius:10px; border:1px solid var(--line-strong);
+    background:var(--surface-raised); color:var(--ink); font-size:14px; font-family:inherit;
+  }
+  select:focus{outline:2px solid var(--accent); outline-offset:1px;}
+  .date-range{ display:flex; align-items:center; gap:6px;}
+  .date-range-sep{ color:var(--ink-muted); font-size:13px;}
+  .chips{display:flex; gap:6px; flex-wrap:wrap;}
+  .chip{
+    font-size:12.5px; font-weight:500; padding:7px 12px; border-radius:999px;
+    border:1px solid var(--line-strong); background:var(--surface-raised); color:var(--ink-2);
+    cursor:pointer; user-select:none; transition:background .12s,color .12s,border-color .12s;
+  }
+  .chip[aria-pressed="true"]{ background:var(--accent-soft); color:var(--accent-ink); border-color:var(--accent);}
+  .chip:hover{border-color:var(--ink-muted);}
+  .chip-remove{
+    display:inline-flex; align-items:center; justify-content:center; margin-left:7px;
+    width:14px; height:14px; border-radius:50%; font-size:10px; line-height:1; opacity:.65;
+  }
+  .chip-remove:hover{ opacity:1; background:rgba(0,0,0,.12); }
+
+  .popular-brands{ display:flex; flex-wrap:wrap; gap:7px 8px; align-items:center; margin-bottom:12px;}
+  .popular-brands-label{ font-size:12.5px; color:var(--ink-muted); white-space:nowrap; margin-right:2px;}
+  .popular-brands .chip{ padding:6px 12px; font-size:12px;}
+  .popular-brands .chip:disabled{ opacity:.4; cursor:not-allowed;}
+
+  .filter-group{ display:flex; flex-wrap:wrap; gap:7px 8px; align-items:center; margin-bottom:12px;}
+  .filter-group-label{ font-size:12.5px; color:var(--ink-muted); white-space:nowrap; margin-right:2px;}
+  .filter-group .chip{ padding:6px 12px; font-size:12px;}
+  .preset-chip{
+    font-size:12px; font-weight:500; padding:6px 11px; border-radius:999px;
+    border:1px dashed var(--line-strong); background:transparent; color:var(--ink-2);
+    cursor:pointer; user-select:none; font-family:inherit;
+  }
+  .preset-chip:hover{ border-color:var(--accent); color:var(--accent-ink); border-style:solid;}
+  .preset-sep{ width:1px; height:16px; background:var(--line); margin:0 2px; flex:none;}
+
+  .brand-compare{ display:flex; flex-wrap:wrap; gap:10px 12px; align-items:flex-start; margin-bottom:8px;}
+  .brandpicker-input-wrap{ flex:1 1 260px; min-width:220px; max-width:420px;}
+  .brandpicker-suggestions{
+    position:absolute; top:calc(100% + 6px); left:0; right:0; z-index:8;
+    background:var(--surface-raised); border:1px solid var(--border); border-radius:10px;
+    box-shadow:var(--shadow); max-height:230px; overflow-y:auto; padding:6px;
+  }
+  .sugg-item{
+    padding:8px 10px; border-radius:7px; cursor:pointer; font-size:13.5px; color:var(--ink);
+    display:flex; justify-content:space-between; align-items:center; gap:10px;
+  }
+  .sugg-item:hover{ background:var(--accent-soft); color:var(--accent-ink); }
+  .sugg-count{ font-size:11px; color:var(--ink-muted); font-family:"IBM Plex Mono",monospace; flex:none;}
+  .sugg-empty{ padding:8px 10px; font-size:12.5px; color:var(--ink-muted);}
+
+  .chart-tabs{display:flex; gap:4px;}
+  .tab-btn{
+    font-size:12.5px; font-weight:600; padding:6px 12px; border-radius:8px; border:1px solid transparent;
+    background:transparent; color:var(--ink-muted); cursor:pointer; font-family:inherit;
+  }
+  .tab-btn[aria-selected="true"]{ background:var(--line); color:var(--ink);}
+
+  .chart-wrap{position:relative; margin-top:10px;}
+  svg.chart{ width:100%; height:320px; display:block; overflow:visible;}
+  .gridline{stroke:var(--line); stroke-width:1;}
+  .baseline{stroke:var(--line-strong); stroke-width:1;}
+  .axis-label{ font-family:"IBM Plex Mono",monospace; font-size:11px; fill:var(--ink-muted);}
+  .series-line{ fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round;}
+  .series-area{ opacity:.10; }
+  .end-label{ font-family:"IBM Plex Mono",monospace; font-size:11.5px; font-weight:600; font-variant-numeric:tabular-nums;}
+  .crosshair-line{ stroke:var(--line-strong); stroke-width:1; stroke-dasharray:3 3;}
+  .hover-dot{ stroke:var(--surface-raised); stroke-width:2;}
+  .legend{ display:flex; flex-wrap:wrap; gap:12px 18px; margin-top:14px;}
+  .legend-item{ display:flex; align-items:center; gap:7px; font-size:12.5px; color:var(--ink-2);}
+  .legend-swatch{ width:10px; height:10px; border-radius:3px; flex:none;}
+
+  .tooltip{
+    position:absolute; pointer-events:none; background:var(--surface-raised); border:1px solid var(--border);
+    border-radius:10px; padding:9px 12px; box-shadow:var(--shadow); font-size:12.5px; z-index:5;
+    opacity:0; transition:opacity .08s; white-space:nowrap;
+  }
+  .tooltip.show{opacity:1;}
+  .tooltip .tt-date{ font-family:"IBM Plex Mono",monospace; color:var(--ink-muted); font-size:11px; margin-bottom:4px;}
+  .tooltip .tt-row{ display:flex; align-items:center; gap:6px; font-variant-numeric:tabular-nums;}
+  .tooltip .tt-dot{width:8px;height:8px;border-radius:50%; flex:none;}
+
+  table{ width:100%; border-collapse:collapse; font-size:13.5px;}
+  thead th{
+    text-align:left; font-size:11.5px; text-transform:uppercase; letter-spacing:.05em;
+    color:var(--ink-muted); font-weight:600; padding:0 10px 10px; border-bottom:1px solid var(--line);
+    cursor:pointer; white-space:nowrap;
+  }
+  thead th.num, td.num{ text-align:right; font-variant-numeric:tabular-nums; font-family:"IBM Plex Mono",monospace;}
+  thead th:hover{color:var(--ink);}
+  tbody td{ padding:11px 10px; border-bottom:1px solid var(--line); vertical-align:middle;}
+  tbody tr:hover{ background:var(--accent-soft); }
+  .pname{font-weight:500;}
+  .pmeta{color:var(--ink-muted); font-size:12px;}
+  .type-badge{
+    font-size:10.5px; font-weight:600; padding:2px 7px; border-radius:999px; white-space:nowrap;
+    background:var(--line); color:var(--ink-2);
+  }
+  .table-wrap{overflow-x:auto;}
+  .popular-table-wrap{ max-height:560px; overflow-y:auto; }
+  .popular-table-wrap thead th{ position:sticky; top:0; background:var(--surface-raised); z-index:2; cursor:default;}
+  .popular-table-wrap thead th:hover{ color:var(--ink-muted); }
+  table.matrix{ font-size:13px; border-collapse:separate; border-spacing:0; }
+  table.matrix th, table.matrix td{ padding:8px 10px; border-bottom:1px solid var(--line); white-space:nowrap; }
+  /* the Raspon column left, so the freed width goes into a bigger read on this table */
+  table.focus-table{ font-size:15px; }
+  table.focus-table th, table.focus-table td{ padding:11px 16px; }
+  table.matrix thead th{ position:sticky; top:0; background:var(--surface-raised); z-index:2; cursor:default; }
+  table.matrix td.brand-cell, table.matrix th.brand-head{
+    position:sticky; left:0; background:var(--surface-raised); z-index:1;
+    text-align:left; font-weight:500; border-right:1px solid var(--line);
+  }
+  table.matrix td.num{ text-align:right; font-variant-numeric:tabular-nums; font-family:"IBM Plex Mono",monospace; color:var(--ink-2); }
+  table.matrix td.num.empty-cell{ color:var(--line-strong); }
+  table.matrix tbody tr:hover td{ background:var(--accent-soft); }
+  table.matrix tbody tr:hover td.brand-cell{ background:var(--accent-soft); }
+  /* --- size filter pinned above the first table, so it is usable on arrival --- */
+  .quick-filter{
+    display:flex; flex-wrap:wrap; align-items:center; gap:8px 10px;
+    background:var(--surface-raised); border:1px solid var(--border); border-radius:14px;
+    box-shadow:var(--shadow); padding:12px 18px; margin-bottom:22px;
+  }
+  .quick-filter-label{ font-size:12.5px; color:var(--ink-muted); white-space:nowrap; margin-right:2px; }
+  .quick-filter .chip{ padding:6px 12px; font-size:12px; }
+
+  /* --- headline price per popular brand (first hero card) --- */
+  .hero-brands{ flex:1 1 100%; }
+  .brand-strip{ display:grid; grid-template-columns:repeat(auto-fit,minmax(168px,1fr)); gap:10px; margin-top:10px; }
+  .brand-tile{ background:var(--page); border:1px solid var(--border); border-radius:12px; padding:12px 14px; min-width:0; }
+  .brand-tile-name{ font-size:12px; font-weight:600; letter-spacing:.03em; color:var(--ink-2); text-transform:uppercase; }
+  .brand-tile-value{
+    font-family:"Fraunces", Georgia, serif; font-weight:600; font-size:25px; letter-spacing:-.01em;
+    font-variant-numeric:tabular-nums; margin-top:4px; display:flex; align-items:baseline; gap:7px;
+  }
+  .brand-tile-value small{ font-family:"IBM Plex Sans",sans-serif; font-size:12px; font-weight:500; color:var(--ink-muted); }
+  .brand-tile-sub{ font-size:11.5px; color:var(--ink-muted); margin-top:5px; font-variant-numeric:tabular-nums; }
+  .brand-tile-sub b{ font-weight:600; color:var(--accent-ink); }
+  .brand-tile-empty{ color:var(--ink-muted); font-size:13px; margin-top:6px; }
+
+  /* --- an article currently on promotion --- */
+  .promo-price{ color:var(--promo); font-weight:600; }
+  .promo-tag{
+    display:inline-flex; align-items:center; gap:5px; margin-top:3px; padding:1px 7px;
+    border-radius:999px; background:var(--promo-soft); color:var(--promo-ink);
+    font-family:"IBM Plex Sans",sans-serif; font-size:10.5px; font-weight:600;
+    letter-spacing:.01em; white-space:nowrap;
+  }
+  .promo-tag .promo-dur{ font-weight:500; opacity:.85; }
+  .focus-legend-promo{ background:var(--yellow-soft); color:var(--yellow-ink); padding:1px 6px; border-radius:6px; font-weight:600; }
+
+  /* --- promo ("akcije") module --- */
+  table.matrix td.promo-cell{ text-align:center; font-variant-numeric:tabular-nums; font-family:"IBM Plex Mono",monospace; color:var(--ink); }
+  table.matrix td.promo-cell.promo-empty{ color:var(--line-strong); }
+  .promo-sub{ display:block; font-size:10px; color:var(--ink-muted); font-family:"IBM Plex Sans",sans-serif; margin-top:1px; }
+  .promo-section-head, .section-head{
+    display:flex; align-items:baseline; justify-content:space-between; gap:16px; flex-wrap:wrap;
+    margin:28px 0 4px; padding-top:22px; border-top:1px solid var(--line);
+  }
+  /* --- focus matrix: same SKU across the key chains --- */
+  table.matrix td.focus-cheap{ background:var(--accent-soft); color:var(--accent-ink); font-weight:600; }
+  /* the plain-class rule above loses to the zebra-stripe rule on even rows
+     (more element selectors = higher specificity), so it needs an explicit
+     nth-child(even) version to actually win there too */
+  table.matrix tbody tr:nth-child(even) td.focus-cheap{ background:var(--accent-soft); }
+  table.matrix tbody tr:hover td.focus-cheap{ background:var(--accent-soft); }
+  /* on promotion — must out-rank both td.num and the cheapest-cell rule above */
+  table.matrix td.focus-promo{ background:var(--yellow-soft); color:var(--yellow-ink); font-weight:600; }
+  table.matrix tbody tr:nth-child(even) td.focus-promo{ background:var(--yellow-soft); }
+  table.matrix tbody tr:hover td.focus-promo{ background:var(--yellow-soft); }
+  table.matrix td.focus-range{ color:var(--ink-muted); white-space:nowrap; }
+  table.matrix td.brand-cell .focus-vol{ color:var(--ink-muted); font-weight:400; }
+  .focus-legend-cheap{ background:var(--accent-soft); color:var(--accent-ink); padding:1px 6px; border-radius:6px; font-weight:600; }
+  table.promo-cal{ border-collapse:separate; border-spacing:2px; width:auto; }
+  table.promo-cal thead th{
+    padding:0 0 6px; font-size:10px; font-weight:500; color:var(--ink-muted);
+    text-transform:none; letter-spacing:0; white-space:nowrap; text-align:left;
+    border-bottom:0; cursor:default;
+  }
+  table.promo-cal thead th:hover{ color:var(--ink-muted); }
+  table.promo-cal th.cal-chain{
+    position:sticky; left:0; z-index:2; background:var(--surface-raised);
+    text-align:left; font-weight:500; color:var(--ink-2); font-size:12.5px;
+    text-transform:none; letter-spacing:0; padding:0 12px 0 0; white-space:nowrap;
+    border-bottom:0; cursor:default;
+  }
+  table.promo-cal td.cal-cell{
+    width:13px; min-width:13px; height:17px; padding:0; border-radius:3px;
+    background:var(--line); border-bottom:0;
+  }
+  .promo-legend{ display:flex; align-items:center; gap:8px; margin-top:14px; font-size:12px; color:var(--ink-muted); flex-wrap:wrap;}
+  .promo-legend-scale{ display:flex; gap:2px; }
+  .promo-legend-swatch{ width:15px; height:13px; border-radius:3px; }
+  /* --- price tiers per chain --- */
+  .tier-controls{ display:flex; flex-wrap:wrap; gap:10px 12px; align-items:flex-end; margin-bottom:14px; }
+  .tier-ctl{ display:flex; flex-direction:column; gap:5px; font-size:12px; color:var(--ink-muted); }
+  .tier-ctl select{ padding:8px 11px; font-size:13px; min-width:190px; }
+  .tier-controls .preset-chip{ margin-bottom:2px; }
+  .lvl-list{ display:flex; flex-wrap:wrap; gap:6px; }
+  .lvl{
+    display:inline-flex; align-items:baseline; gap:6px; padding:5px 9px; border-radius:8px;
+    border:1px solid var(--line-strong); background:var(--page); white-space:nowrap;
+    font-variant-numeric:tabular-nums; font-size:12.5px;
+  }
+  .lvl b{ font-weight:600; }
+  .lvl small{ color:var(--ink-muted); font-size:11.5px; }
+  .lvl-cheap{ border-color:var(--accent); background:var(--accent-soft); }
+  .lvl-cheap b{ color:var(--accent-ink); }
+  .lvl-promo{ border-color:var(--promo); background:var(--promo-soft); }
+  .lvl-promo b{ color:var(--promo-ink); }
+  .lvl-share{
+    display:block; height:3px; border-radius:2px; background:var(--accent); opacity:.55; margin-top:4px;
+  }
+  .tier-detail-name{ font-size:12.5px; color:var(--ink-2); }
+  .tier-detail-name small{ display:block; color:var(--ink-muted); font-size:11.5px; margin-top:2px; }
+  .tier-bar{ display:flex; height:14px; border-radius:4px; overflow:hidden; min-width:160px; background:var(--line); }
+  .tier-seg{ height:100%; }
+  .tier-split{ font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--ink-2); white-space:nowrap; }
+  .tier-split small{ color:var(--ink-muted); font-family:"IBM Plex Sans",sans-serif; font-size:11px; }
+  table.matrix td.tier-mode{ font-weight:600; }
+  .spark{display:block;}
+  /* --- long-term price growth --- */
+  table.matrix.grow-table{ font-size:12.5px; }
+  table.matrix.grow-table th, table.matrix.grow-table td{ padding:7px 7px; }
+  table.matrix.grow-table thead th{ font-size:11px; letter-spacing:.02em; }
+  table.matrix.grow-table td.brand-cell{ font-size:12.5px; }
+  table.matrix td.grow-cell{ text-align:right; font-variant-numeric:tabular-nums; font-family:"IBM Plex Mono",monospace; font-weight:600; }
+  table.matrix td.grow-cell.grow-flat{ color:var(--ink-muted); font-weight:400; }
+  table.matrix td.grow-sum{ text-align:right; font-variant-numeric:tabular-nums; font-family:"IBM Plex Mono",monospace; }
+  table.matrix td.grow-sum small{ display:block; font-family:"IBM Plex Sans",sans-serif; color:var(--ink-muted); font-size:11px; font-weight:400; }
+  .grow-period{ display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+  .grow-period-label{ font-size:12px; color:var(--ink-muted); margin-right:2px; }
+  .grow-period select{ padding:6px 8px; border-radius:8px; font-size:12px; }
+  .grow-period .preset-chip{ padding:5px 9px; font-size:11.5px; }
+  .grow-period .preset-chip[aria-pressed="true"]{ border-style:solid; border-color:var(--accent); color:var(--accent-ink); background:var(--accent-soft); }
+  .grow-lead{ display:flex; flex-wrap:wrap; gap:10px; margin-bottom:16px; }
+  .grow-stat{
+    flex:1 1 190px; min-width:170px; background:var(--page); border:1px solid var(--border);
+    border-radius:12px; padding:12px 14px;
+  }
+  .grow-stat-label{ font-size:11.5px; color:var(--ink-muted); font-weight:600; letter-spacing:.02em; text-transform:uppercase; }
+  .grow-stat-value{
+    font-family:"Fraunces", Georgia, serif; font-weight:600; font-size:24px; letter-spacing:-.01em;
+    font-variant-numeric:tabular-nums; margin-top:3px;
+  }
+  .grow-stat-sub{ font-size:11.5px; color:var(--ink-muted); margin-top:3px; }
+  .grow-up{ color:var(--promo-ink); }
+  .grow-down{ color:var(--accent-ink); }
+  .pager{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:16px; font-size:12.5px; color:var(--ink-muted);}
+  .pager button{
+    font-family:inherit; font-size:12.5px; font-weight:600; padding:7px 12px; border-radius:8px;
+    border:1px solid var(--line-strong); background:var(--surface-raised); color:var(--ink); cursor:pointer;
+  }
+  .pager button:disabled{opacity:.4; cursor:default;}
+  .empty{ padding:40px 10px; text-align:center; color:var(--ink-muted); font-size:14px;}
+
+  footer{margin-top:36px; padding-top:22px; border-top:1px solid var(--line); font-size:12.5px; color:var(--ink-muted); line-height:1.6;}
+  footer a{color:var(--accent-ink);}
+  .foot-grid{display:flex; flex-wrap:wrap; gap:24px; justify-content:space-between;}
+
+  @media (max-width:640px){
+    .hero-value{font-size:34px;}
+    svg.chart{height:260px;}
+  }
+
+  /* ===== test build: orientation & table legibility ===== */
+  .secnav{
+    position:sticky; top:0; z-index:20; display:flex; gap:6px; flex-wrap:wrap; align-items:center;
+    background:color-mix(in srgb, var(--page) 88%, transparent); backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line); padding:10px 0 10px; margin:0 0 28px;
+  }
+  .secnav a{
+    font-size:12px; font-weight:500; color:var(--ink-2); text-decoration:none;
+    padding:5px 10px; border-radius:999px; border:1px solid transparent; white-space:nowrap;
+  }
+  .secnav a:hover{ border-color:var(--line-strong); color:var(--ink); }
+  .secnav a[aria-current="true"]{ background:var(--accent-soft); color:var(--accent-ink); border-color:var(--accent); }
+  .secnav .secnav-label{ font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-muted); margin-right:4px; }
+
+  .panel-head.hd{ align-items:flex-start; }
+  .panel-heading{ display:flex; align-items:flex-start; gap:10px; min-width:0; }
+  .sec-badge{
+    flex:none; width:24px; height:24px; border-radius:7px; display:inline-flex; align-items:center; justify-content:center;
+    background:var(--accent-soft); color:var(--accent-ink); font-family:"IBM Plex Mono",monospace;
+    font-size:11px; font-weight:600; margin-top:1px;
+  }
+  .panel-heading .panel-title{ display:block; }
+  .panel-purpose{ display:block; font-size:12.5px; color:var(--ink-2); margin-top:3px; max-width:70ch; }
+
+  details.howto{ margin:10px 0 14px; }
+  details.howto > summary{
+    cursor:pointer; font-size:12px; font-weight:600; color:var(--ink-2); list-style:none;
+    display:inline-flex; align-items:center; gap:6px; padding:5px 10px; border-radius:999px;
+    border:1px dashed var(--line-strong);
+  }
+  details.howto > summary::-webkit-details-marker{ display:none; }
+  details.howto > summary::before{ content:"?"; font-family:"IBM Plex Mono",monospace; color:var(--ink-muted); }
+  details.howto[open] > summary{ border-style:solid; }
+  details.howto .howto-body{ font-size:12.5px; color:var(--ink-muted); line-height:1.6; margin:10px 0 0; max-width:92ch; }
+
+  .tbl-legend{ display:flex; flex-wrap:wrap; gap:6px 10px; align-items:center; margin:0 0 10px; }
+  .lgd{
+    display:inline-flex; align-items:center; gap:6px; font-size:11.5px; color:var(--ink-2);
+    border:1px solid var(--line); border-radius:999px; padding:3px 9px; background:var(--surface-raised);
+  }
+  .lgd i{ width:10px; height:10px; border-radius:3px; display:inline-block; flex:none; }
+
+  /* zebra + column rhythm for every matrix table */
+  table.matrix tbody tr:nth-child(even) td{ background:var(--zebra); }
+  table.matrix tbody tr:nth-child(even) td.brand-cell{ background:var(--zebra); }
+  table.matrix tbody tr:hover td, table.matrix tbody tr:hover td.brand-cell{ background:var(--accent-soft); }
+  table.matrix thead th{ background:var(--head-bg); color:var(--ink-2); font-size:11px; letter-spacing:.03em; text-transform:uppercase; }
+  table.matrix thead th{ z-index:3; }
+  table.matrix thead th.brand-head{ background:var(--head-bg); z-index:4; }
+  table.matrix thead tr.colrow th{ border-bottom:1px solid var(--line-strong); }
+  table.matrix td.brand-cell{ border-right:1px solid var(--line-strong); }
+  table.matrix th.brand-head{ border-right:1px solid var(--line-strong); }
+  table.matrix th.colsep, table.matrix td.colsep{ border-left:1px solid var(--line-strong); }
+  /* Each table scrolls in its OWN box with its header pinned at top:0 (same
+     recipe as .popular-table-wrap below) rather than the header riding along
+     with page-level scroll. top:0 inside a box that actually scrolls itself
+     can never overshoot past the top row, unlike the previous top:var(--navh)
+     approach, which slid the header down by however tall the nav happened to
+     be - overshooting past (hiding) however many rows were shorter than that,
+     on every table, tall or short. */
+  .table-wrap{ max-height:560px; overflow-y:auto; }
+  table.matrix thead tr.grouprow th{
+    text-transform:uppercase; font-size:10px; letter-spacing:.1em; color:var(--ink-muted);
+    background:var(--head-bg); border-bottom:0; text-align:center;
+    height:22px; line-height:22px; padding:0 7px;
+  }
+  table.matrix thead tr.grouprow th.brand-head{ text-align:left; }
+  table.matrix thead tr.grouprow th{ top:0; }
+  table.matrix thead tr.colrow th{ top:22px; }
+
+  /* the main product table gets the same treatment */
+  table#tbl tbody tr:nth-child(even) td, table#tblPopular tbody tr:nth-child(even) td{ background:var(--zebra); }
+</style>
+
+<div class="wrap">
+  <p class="eyebrow">cijene.dev · arhiva cijena · <span style="color:var(--promo-ink)">test dizajn</span></p>
+  <h1>Cijena vode kroz vrijeme</h1>
+  <p class="lede">Tjedni presjek cijena flaširane vode (negazirana i gazirana) u hrvatskim trgovačkim lancima, izgrađen iz dnevnih arhiva <a href="https://cijene.dev" target="_blank" rel="noopener">cijene.dev</a>. Na vrhu su najpopularnije marke u najjačim dućanima; ispod toga filteri i grafovi za dublju usporedbu, pa akcije po markama i lancima, a na dnu puni popis svih artikala.</p>
+
+
+  <nav class="secnav" aria-label="Dijelovi stranice">
+    <span class="secnav-label">Skoči na</span>
+    <a href="#sec-fokus">01 · Marke u dućanima</a>
+    <a href="#sec-razine">02 · Razine cijena</a>
+    <a href="#sec-filteri">03 · Filteri i grafovi</a>
+    <a href="#sec-marke">04 · Marke po dućanima</a>
+    <a href="#sec-akcije">05 · Akcije</a>
+    <a href="#sec-proizvodi">06 · Svi proizvodi</a>
+    <a href="#sec-rast">07 · Rast cijena</a>
+  </nav>
+
+  <div class="hero" id="hero"></div>
+
+  <div class="quick-filter">
+    <span class="quick-filter-label">Veličina:</span>
+    <div class="chips" id="volumeChipsTop"></div>
+    <button type="button" class="preset-chip" id="volumeClearTop" hidden>Sve veličine</button>
+  </div>
+
+  <div class="panel" id="sec-fokus">
+    <div class="panel-head hd">
+      <div class="panel-heading"><span class="sec-badge">01</span><div>
+        <span class="panel-title">Najpopularnije marke u najjačim dućanima</span>
+        <span class="panel-purpose">Tko je koliko skup: jedan redak = marka + veličina, jedan stupac = lanac, u ćeliji zadnja cijena.</span>
+      </div></div>
+      <span class="panel-note" id="focusNote"></span>
+    </div>
+    <details class="howto"><summary>Kako čitati ovu tablicu</summary><p class="howto-body">Zadnja cijena istog artikla (marka + veličina) u deset najbitnijih lanaca: Konzum, Kaufland, Lidl, Spar, Plodine, Studenac, Ribola, Tommy, Metro i Eurospin. <span class="focus-legend-cheap">Najjeftiniji lanac</span> u retku je istaknut, a cijena <span class="focus-legend-promo">na akciji</span> je požućena. Prikaz ne ovisi o filteru trgovina ispod; ovisi o razdoblju, tipu vode, veličini i pretrazi.</p></details>
+    <div class="tbl-legend"><span class="lgd"><i style="background:var(--accent)"></i>najjeftiniji lanac u retku</span><span class="lgd"><i style="background:var(--yellow-ink)"></i>cijena je na akciji</span><span class="lgd"><i style="background:var(--line-strong)"></i>lanac nema taj artikl</span></div>
+    <div class="table-wrap" id="focusMatrixWrap"></div>
+
+    <div class="section-head">
+      <div class="panel-heading"><span class="sec-badge">01b</span><div>
+        <span class="panel-title">Svi artikli tih marki</span>
+        <span class="panel-purpose">Isti izbor marki, ali artikl po artikl — sa zadnjom cijenom, promjenom u 90 dana i trendom.</span>
+      </div></div>
+      <span class="panel-note" id="popularCount"></span>
+    </div>
+    <details class="howto"><summary>Kako čitati ovu tablicu</summary><p class="howto-body">Pojedinačni artikli najpoznatijih marki (Jamnica, Jana, Cetina, Radenska, Studena, Mivela, Studenac, Leda (Nardum), Donat, Zala, Sara, Sveti Rok, S Budget) u tih osam lanaca, s promjenom u zadnjih 90 dana i trendom. Puni popis svih voda i svih trgovina je u tablici "Proizvodi" na dnu.</p></details>
+    <div class="tier-controls">
+      <label class="tier-ctl"><span>Marka</span><select id="popularBrandSel" aria-label="Marka za filtar tablice"></select></label>
+      <label class="tier-ctl"><span>Trgovački lanac</span><select id="popularChainSel" aria-label="Lanac za filtar tablice"></select></label>
+    </div>
+    <div class="table-wrap popular-table-wrap" id="popularTableWrap">
+      <table id="tblPopular">
+        <thead>
+          <tr>
+            <th>Proizvod</th>
+            <th>Lanac</th>
+            <th>Tip</th>
+            <th>Veličina</th>
+            <th class="num" id="thPricePopular">Zadnja cijena</th>
+            <th class="num">Promjena 90d</th>
+            <th>Trend</th>
+          </tr>
+        </thead>
+        <tbody id="tbodyPopular"></tbody>
+      </table>
+      <div class="empty" id="emptyMsgPopular" style="display:none;">Nema podataka za odabrani filtar.</div>
+    </div>
+  </div>
+
+  <div class="panel" id="sec-razine">
+    <div class="panel-head hd">
+      <div class="panel-heading"><span class="sec-badge">02</span><div>
+        <span class="panel-title">Razine cijena po lancu</span>
+        <span class="panel-purpose">Koliko različitih cijena isti artikl ima unutar jednog lanca — odaberi marku i veličinu za točne razine.</span>
+      </div></div>
+      <span class="panel-note" id="tiersNote"></span>
+    </div>
+    <details class="howto"><summary>Kako čitati ovu tablicu</summary><p class="howto-body" id="tiersIntro"></p></details>
+    <div class="tier-controls">
+      <label class="tier-ctl"><span>Marka</span><select id="tierBrandSel" aria-label="Marka za razine cijena"></select></label>
+      <label class="tier-ctl"><span>Veličina</span><select id="tierVolSel" aria-label="Veličina za razine cijena"></select></label>
+      <button type="button" class="preset-chip" id="tierReset" hidden>Natrag na pregled svih lanaca</button>
+    </div>
+    <div class="tbl-legend" id="tiersLegendTop"><span class="lgd"><i style="background:var(--accent)"></i>najniža razina u lancu</span><span class="lgd">Razina = jedna cijena koju plaćaš u dijelu poslovnica tog lanca</span></div>
+    <div class="table-wrap" id="tiersWrap"></div>
+    <div class="promo-legend" id="tiersLegend"></div>
+  </div>
+
+  <div class="panel" id="sec-filteri">
+    <div class="panel-head hd" style="margin-bottom:14px;">
+      <div class="panel-heading"><span class="sec-badge">03</span><div>
+        <span class="panel-title">Filteri i grafovi</span>
+        <span class="panel-purpose">Upravljačka ploča: razdoblje, lanci, tip vode, veličine i marke. Sve ispod ove kućice (graf, tablica marki, popis proizvoda) prati ovaj odabir.</span>
+      </div></div>
+    </div>
+    <div class="filters">
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="text" id="q" placeholder="Traži proizvod ili marku (npr. Jana, Jamnica, Studena…)" autocomplete="off">
+      </div>
+      <div class="date-range" id="dateRange">
+        <select id="dateFromSelect" aria-label="Od datuma"></select>
+        <span class="date-range-sep">–</span>
+        <select id="dateToSelect" aria-label="Do datuma"></select>
+      </div>
+    </div>
+
+    <div class="filter-group" id="chainFilterGroup">
+      <span class="filter-group-label">Trgovine:</span>
+      <button type="button" class="preset-chip" id="chainPresetMajor">Glavni lanci</button>
+      <button type="button" class="preset-chip" id="chainPresetAll">Svi lanci</button>
+      <span class="preset-sep"></span>
+      <div class="chips" id="chainChips"></div>
+    </div>
+
+    <div class="filter-group" id="volumeFilterGroup">
+      <span class="filter-group-label">Veličina:</span>
+      <div class="chips" id="volumeChips"></div>
+    </div>
+
+    <div class="filter-group" id="typeFilterGroupWrap">
+      <span class="filter-group-label">Tip vode:</span>
+      <div class="chips" id="typeChips"></div>
+    </div>
+
+    <details class="howto"><summary>Kako čitati ovu tablicu</summary><p class="howto-body">Zadano su odabrani glavni nacionalni lanci (Kaufland, Spar, Lidl, Plodine, Tommy, Konzum, Metro) jer se u njima isti proizvodi prate posvuda — dodaj još lanaca ili klikni "Svi lanci" za uključivanje manjih regionalnih trgovina. "Od–Do" bira razdoblje za graf i tablicu ispod (zadano: cijela dostupna povijest). Odaberi više trgovina, veličina ili marki (ispod) da ih usporediš jedne pored drugih u kartici cijene gore. Veličine "4 pack" i "6 pack" su multipakovi od četiri odnosno šest boca od 1,5 l (uključujući "4+2 gratis"), a "Pakiranje" su ostali višekomadni artikli (npr. 12×0,5 l, 24×0,33 l) — svi su odvojeni od pojedinačnih veličina jer im je upisana cijena za cijelo pakiranje, ne za jednu bocu. "Velika pakiranja (5-7 l)" su boce od 5, 6 i 7 l, a "Galon" velike povratne boce za dispenzere (15 l, 18,9 l) — obje su zasebne od običnih pakiranja.</p></details>
+
+    <div class="popular-brands" id="popularBrands">
+      <span class="popular-brands-label">Popularne marke:</span>
+      <div class="chips" id="popularBrandChips"></div>
+    </div>
+    <div class="brand-compare">
+      <div class="search brandpicker-input-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="text" id="brandSearch" placeholder="Usporedi marke — dodaj npr. Cetina, Jana, Studena…" autocomplete="off">
+        <div class="brandpicker-suggestions" id="brandSuggestions" hidden></div>
+      </div>
+      <div class="chips" id="brandChips"></div>
+    </div>
+    <p class="panel-note" id="brandCompareNote" style="margin:-10px 0 18px;">Odabrane marke filtriraju cijeli prikaz ispod (graf, tablicu marki i popis proizvoda) — kombiniraj s veličinom pakiranja (npr. 1,5 l) za usporedbu točno određenih proizvoda.</p>
+
+    <div class="panel-head">
+      <span class="panel-title" id="chartTitle">Usporedba po markama</span>
+      <div class="chart-tabs" id="chartTabs">
+        <button class="tab-btn" data-tab="brands" aria-selected="true">Po markama</button>
+        <button class="tab-btn" data-tab="chains" aria-selected="false">Po dućanima</button>
+      </div>
+    </div>
+    <p class="panel-note" id="chartNote"></p>
+    <div class="chart-wrap" id="chartBrandsWrap">
+      <svg class="chart" id="chartBrands" viewBox="0 0 1000 320" preserveAspectRatio="none"></svg>
+      <div class="tooltip" id="ttBrands"></div>
+      <div class="legend" id="legendBrands"></div>
+    </div>
+    <div class="chart-wrap" id="chartChainsWrap" style="display:none;">
+      <svg class="chart" id="chartChains" viewBox="0 0 1000 320" preserveAspectRatio="none"></svg>
+      <div class="tooltip" id="ttChains"></div>
+      <div class="legend" id="legendChains"></div>
+    </div>
+  </div>
+
+  <div class="panel" id="sec-marke">
+    <div class="panel-head hd">
+      <div class="panel-heading"><span class="sec-badge">04</span><div>
+        <span class="panel-title">Marke po dućanima</span>
+        <span class="panel-purpose">Zadnja cijena svake marke u svakom lancu — širi pogled od tablice 01, ovisi o filterima iznad.</span>
+      </div></div>
+      <span class="panel-note" id="matrixNote"></span>
+    </div>
+    <details class="howto"><summary>Kako čitati ovu tablicu</summary><p class="howto-body">Zadnja zabilježena cijena (€) za svaku marku u svakom lancu unutar odabranog razdoblja i filtra. Marke su grupirane iz sirovih naziva dobavljača (npr. "Jamnica", "JAMNICA PLUS D.O.O." i "JAMNICA-BAP" broje se kao ista marka).</p></details>
+    <div class="tbl-legend"><span class="lgd">Ćelija = zadnja cijena te marke u tom lancu</span><span class="lgd"><i style="background:var(--line-strong)"></i>marke nema u tom lancu</span></div>
+    <div class="table-wrap" id="matrixWrap"></div>
+  </div>
+
+  <div class="panel" id="sec-akcije">
+    <div class="panel-head hd">
+      <div class="panel-heading"><span class="sec-badge">05</span><div>
+        <span class="panel-title">Akcije po markama i dućanima</span>
+        <span class="panel-purpose">Tko koliko često i koliko duboko snižava — broj akcija i prosječni popust.</span>
+      </div></div>
+      <div class="chart-tabs" id="promoMetricTabs">
+        <button class="tab-btn" data-metric="count" aria-selected="true">Broj akcija</button>
+        <button class="tab-btn" data-metric="depth" aria-selected="false">Prosječni popust</button>
+      </div>
+    </div>
+    <details class="howto"><summary>Kako čitati ovu tablicu</summary><p class="howto-body">Koliko je puta svaka marka bila na akciji u svakom lancu unutar odabranog razdoblja. Akcije su <strong>službene oznake iz izvornih podataka</strong> (trgovac sam označava akcijsku cijenu i redovnu cijenu s koje je snižena), ne procjena iz kretanja cijene. <strong>Broj akcija</strong> broji zasebne akcije (uzastopni tjedni = jedna akcija), a <strong>Prosječni popust</strong> je medijan sniženja u odnosu na redovnu cijenu. Prikazane su samo marke s barem jednom akcijom u razdoblju.</p></details>
+    <div class="tier-controls">
+      <label class="tier-ctl"><span>Razdoblje od</span><select id="promoDateFromSel" aria-label="Razdoblje od"></select></label>
+      <label class="tier-ctl"><span>do</span><select id="promoDateToSel" aria-label="Razdoblje do"></select></label>
+      <label class="tier-ctl"><span>Marka</span><select id="promoFilterBrandSel" aria-label="Marka za filtar akcija"></select></label>
+      <label class="tier-ctl"><span>Veličina</span><select id="promoFilterVolSel" aria-label="Veličina za filtar akcija"></select></label>
+    </div>
+    <div class="tbl-legend"><span class="lgd">Tamnija ćelija = više akcija / dublji popust</span></div>
+    <div class="table-wrap" id="promoMatrixWrap"></div>
+    <p class="panel-note" id="promoNote" style="margin-top:12px;"></p>
+
+    <div class="promo-section-head">
+      <span class="panel-title">Kalendar akcija</span>
+      <select id="promoBrandSelect" aria-label="Marka za kalendar akcija"></select>
+    </div>
+    <details class="howto"><summary>Kako čitati ovu tablicu</summary><p class="howto-body">Tjedan po tjedan, u kojim je lancima odabrana marka bila na akciji — pokazuje ritam akcija i preklapaju li se akcije istog proizvođača u više lanaca istovremeno. Tamnije polje znači dublji popust.</p>
+    <div class="table-wrap" id="promoCalWrap"></div>
+    <div class="promo-legend" id="promoLegend"></div>
+  </div>
+
+  <div class="panel" id="sec-proizvodi">
+    <div class="panel-head hd">
+      <div class="panel-heading"><span class="sec-badge">06</span><div>
+        <span class="panel-title">Proizvodi</span>
+        <span class="panel-purpose">Puni popis: svaka voda, svaki lanac, sortiranje klikom na naslov stupca.</span>
+      </div></div>
+      <span class="panel-note" id="tableCount"></span>
+    </div>
+    <div class="table-wrap">
+      <table id="tbl">
+        <thead>
+          <tr>
+            <th data-sort="name">Proizvod</th>
+            <th data-sort="chain">Lanac</th>
+            <th data-sort="type">Tip</th>
+            <th data-sort="volume">Veličina</th>
+            <th class="num" data-sort="price" id="thPrice">Zadnja cijena</th>
+            <th class="num" data-sort="change">Promjena 90d</th>
+            <th>Trend</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+      <div class="empty" id="emptyMsg" style="display:none;">Nema proizvoda koji odgovaraju filtru.</div>
+    </div>
+    <div class="pager">
+      <span id="pageInfo"></span>
+      <div style="display:flex; gap:8px;">
+        <button id="prevPage">← Prethodna</button>
+        <button id="nextPage">Sljedeća →</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" id="sec-rast">
+    <div class="panel-head hd">
+      <div class="panel-heading"><span class="sec-badge">07</span><div>
+        <span class="panel-title">Dugoročni rast cijena</span>
+        <span class="panel-purpose">Je li cijena trajno porasla — akcije se ne broje. Ima svoje razdoblje, desno.</span>
+      </div></div>
+      <div class="grow-period">
+        <span class="grow-period-label">Razdoblje</span>
+        <select id="growthFromSel" aria-label="Od datuma za rast cijena"></select>
+        <span class="date-range-sep">–</span>
+        <select id="growthToSel" aria-label="Do datuma za rast cijena"></select>
+        <button type="button" class="preset-chip" data-growth-preset="13">3 mj</button>
+        <button type="button" class="preset-chip" data-growth-preset="26">6 mj</button>
+        <button type="button" class="preset-chip" data-growth-preset="52">12 mj</button>
+        <button type="button" class="preset-chip" data-growth-preset="all">Sve</button>
+      </div>
+    </div>
+    <p class="panel-note" style="margin-bottom:10px;">Koliko je artikl stvarno poskupio u razdoblju koje odabereš gore desno — <strong>bez akcija</strong>. Akcijski tjedan ne ulazi u računicu (umjesto akcijske uzima se redovna cijena koju trgovac uz nju prijavljuje), a promjena se broji tek kad nova cijena <em>ostane</em> barem odabrani broj tjedana — jednotjedni skok tako ne može proći kao poskupljenje. Uspoređuje se prva stabilna razina cijene u razdoblju sa zadnjom. Ovaj prikaz ima svoje razdoblje, neovisno o filterima na vrhu stranice i o filteru trgovina.</p></details>
+    <p class="panel-note" id="growthNote" style="margin-bottom:14px;"></p>
+    <div class="tier-controls">
+      <label class="tier-ctl"><span>Marka</span><select id="growthBrandSel" aria-label="Marka za dugoročni rast"></select></label>
+      <label class="tier-ctl"><span>Veličina</span><select id="growthVolSel" aria-label="Veličina za dugoročni rast"></select></label>
+      <label class="tier-ctl"><span>Nova cijena mora trajati</span><select id="growthHoldSel" aria-label="Minimalno trajanje nove cijene">
+        <option value="2">2 tjedna</option><option value="3" selected>3 tjedna</option><option value="4">4 tjedna</option><option value="6">6 tjedana</option>
+      </select></label>
+      <label class="tier-ctl"><span>Prikaži</span><select id="growthMetricSel" aria-label="Mjera rasta">
+        <option value="pct" selected>Ukupnu promjenu (%)</option><option value="annual">Godišnju stopu (%)</option><option value="abs">Promjenu u eurima</option>
+      </select></label>
+      <label class="tier-ctl"><span>Artikli</span><select id="growthScopeSel" aria-label="Koje artikle prikazati">
+        <option value="changed" selected>Samo oni kojima se cijena mijenjala</option><option value="all">Svi</option>
+      </select></label>
+    </div>
+    <div class="grow-lead" id="growthLead"></div>
+    <div class="tbl-legend"><span class="lgd"><i style="background:var(--promo)"></i>poskupjelo</span><span class="lgd"><i style="background:var(--accent)"></i>pojeftinilo</span><span class="lgd">≈0% = nije bilo trajne promjene</span><span class="lgd">Ukupno = medijan kroz lance koji artikl drže</span></div>
+    <div class="table-wrap" id="growthWrap"></div>
+    <div class="promo-legend" id="growthLegend"></div>
+  </div>
+
+  <footer>
+    <div class="foot-grid">
+      <div>
+        <strong style="color:var(--ink-2)">O podacima.</strong> Cijene su tjedni uzorak (svakih 7 dana) iz dnevnih ZIP arhiva <a href="https://cijene.dev/archive" target="_blank" rel="noopener">cijene.dev</a>, agregirane po lancu (prosjek/min/maks preko poslovnica). Proizvodi su prepoznati po nazivu ("voda"), uz automatsku klasifikaciju tipa — klasifikacija nije savršena, osobito za rubne slučajeve. Cijene iznad 10 €/kom isključene su iz prosjeka kao vjerojatne greške u izvornim podacima (npr. cijena veleprodajnog pakiranja upisana kao cijena komada). Broj trgovačkih lanaca u arhivi rastao je tijekom vremena, pa najraniji tjedni imaju uži uzorak. Neki lanci (npr. Tommy) isti proizvod prodaju po nekoliko različitih cijena istog dana (regionalne razlike), ne po jednoj cijeni — kad za neki dan imamo taj podatak, tablica proizvoda to označava uz cijenu oznakom "N razine cijena" (prijeđi mišem za detalje). <strong style="color:var(--ink-2)">Akcije</strong> dolaze iz same arhive: trgovac uz akcijsku cijenu upisuje oznaku akcije i redovnu (sidrenu) cijenu s koje je snižena, pa su popust i broj poslovnica na akciji stvarni podatak, a ne procjena. Dvije stvari treba imati na umu. Arhiva se uzorkuje tjedno, pa je trajanje akcije izraženo u tjednim snimkama — akcija kraća od tjedan dana može biti prikazana kao jedan tjedan ili posve promašena. I neki lanci polje zloupotrebljavaju: KTC i Eurospin njime označe gotovo cijeli asortiman, pa se lancu koji ga koristi na više od 40% artikala oznaka akcije uopće ne prikazuje. Za prva tri tjedna arhive (svibanj 2025.) izvor još nije imao to polje.
+      </div>
+      <div>
+        <strong style="color:var(--ink-2)">Pokriveno razdoblje.</strong> <span id="footRange"></span><br>
+        <strong style="color:var(--ink-2)">Zadnje ažurirano.</strong> <span id="footUpdated"></span><br>
+        <strong style="color:var(--ink-2)">Dvostruki zapisi.</strong> <span id="footShadow"></span>
+      </div>
+    </div>
+  </footer>
+</div>
+
+
+<script src="data.js" charset="utf-8"></script>
+<script src="app.js" charset="utf-8"></script>
+
+</body></html>

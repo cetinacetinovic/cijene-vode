@@ -1,0 +1,10 @@
+﻿Promjene cijena za 2026-09-18 (9 artikala):
+trgocentar - JAMNICA, ZAGREB (SARA NEGAZIRANA VODA 1,5L (6)): 0.59 EUR -> 0.89 EUR (+50.8%) [poskupjelo]
+studenac - AWT-RADENSKA (VODA GAZ. RADENSKA): 1.42 EUR -> 0.85 EUR (-40.1%) [pojeftinilo]
+ribola - CETINA (VODA CETINA 15 l NEGAZIRANA): 6.12 EUR -> 7.49 EUR (+22.4%) [poskupjelo]
+tommy - JAMNICA PLUS D.O.O. (VODA NEGAZ.0,33 L JANA PET): 0.75 EUR -> 0.62 EUR (-17.3%) [pojeftinilo]
+branka -  (VODA DESTILIRANA PRINC 5L): 1.49 EUR -> 1.69 EUR (+13.4%) [poskupjelo]
+gavranovic - AWT INTERNATIONAL d.o.o. (VODA ZALA 0,5l): 0.75 EUR -> 0.85 EUR (+13.3%) [poskupjelo]
+gavranovic - JAMNICA plus d.o.o. (VODA JAMNICA BLAGO GAZIRANA MILD 1,5L): 0.95 EUR -> 1.05 EUR (+10.5%) [poskupjelo]
+bure -  (VODA CETINA 7 L): 1.75 EUR -> 1.90 EUR (+8.6%) [poskupjelo]
+trgovina-krk -  (VODA IZVORSKA CETINA 7 l): 2.59 EUR -> 2.52 EUR (-2.7%) [pojeftinilo]

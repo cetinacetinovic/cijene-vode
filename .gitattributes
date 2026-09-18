@@ -1,0 +1,2 @@
+# data.js je jedan redak od ~8 MB - bez pretvaranja krajeva redaka i bez tekstualnog diffa
+app/data.js -text -diff

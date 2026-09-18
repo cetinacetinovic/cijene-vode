@@ -1,0 +1,4 @@
+# Resend API kljuc - u oblaku ide u GitHub repo Secrets, nikad u kod
+pipeline/secrets.json
+app/data.js.tmp
+*.bak

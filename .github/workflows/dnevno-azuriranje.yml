@@ -1,0 +1,74 @@
+name: Dnevno azuriranje cijena
+
+on:
+  schedule:
+    # GitHub cron je u UTC-u: 04:30 UTC = 06:30 ljeti (CEST), 05:30 zimi (CET).
+    # cijene.dev konacnu arhivu dana objavi oko 21:40 tog dana, pa je jutarnje
+    # pokretanje uvijek hvata cijelu.
+    - cron: '30 4 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['app/**']
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: cijene-vode
+  cancel-in-progress: false
+
+jobs:
+  update:
+    # Pipeline je pisan za Windows PowerShell 5.1 - windows runner ga vrti bez izmjena.
+    if: github.event_name != 'push'
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Skini nove cijene s cijene.dev
+        shell: powershell
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          MAIL_FROM: ${{ secrets.MAIL_FROM }}
+          MAIL_TO: ${{ secrets.MAIL_TO }}
+        run: .\pipeline\update.ps1
+
+      - name: Spremi nove podatke u repozitorij
+        shell: powershell
+        run: |
+          git config user.name "cijene-vode-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add app/data.js pipeline/processed-archives.json pipeline/changes
+          if (Test-Path pipeline/.last-noop-mail) { git add pipeline/.last-noop-mail }
+          git diff --cached --quiet
+          if ($LASTEXITCODE -ne 0) {
+            git commit -m "Cijene: $(Get-Date -Format 'yyyy-MM-dd')"
+            git push
+          } else {
+            Write-Host "Nema novih podataka za spremiti."
+          }
+
+  deploy:
+    needs: update
+    # Pokreni i kad je update preskocen (push izmjena appa), ali ne ako je pao.
+    if: ${{ !failure() && !cancelled() }}
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      # ref: main, ne SHA koji je pokrenuo workflow - inace bi objavio podatke
+      # od PRIJE commita koji je update korak upravo gurnuo.
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: app
+      - id: deployment
+        uses: actions/deploy-pages@v4
