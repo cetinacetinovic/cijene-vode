@@ -479,6 +479,53 @@
 
   /* the main product table gets the same treatment */
   table#tbl tbody tr:nth-child(even) td, table#tblPopular tbody tr:nth-child(even) td{ background:var(--zebra); }
+
+  /* ===== mobitel ===== */
+  @media (max-width:640px){
+    /* the page and card paddings added up to leave tables only ~277px of a 375px screen */
+    .wrap{ padding:22px 12px 56px; }
+    .panel{ padding:16px 14px; border-radius:12px; margin-bottom:16px; }
+    .lede{ font-size:15px; margin-bottom:22px; }
+    .hero{ gap:10px; margin-bottom:22px; }
+    .hero-main, .delta-card{ padding:14px 14px; min-width:0; }
+
+    /* one sideways-scrolling line instead of four wrapped lines stuck over a fifth of the screen */
+    .secnav{ flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none; margin:0 -12px 20px; padding:8px 12px; }
+    .secnav::-webkit-scrollbar{ display:none; }
+    .secnav .secnav-label{ display:none; }
+    .secnav a{ flex:none; font-size:13px; padding:6px 11px; }
+
+    .brand-strip{ grid-template-columns:repeat(2, minmax(0,1fr)); gap:8px; }
+    .brand-tile{ padding:10px 11px; }
+    .brand-tile-value{ font-size:21px; }
+
+    /* filters: two pickers per row, full width, bigger tap targets */
+    .tier-ctl{ flex:1 1 140px; }
+    .tier-ctl select{ min-width:0; width:100%; padding:10px 10px; font-size:14px; }
+    .tab-btn{ padding:8px 12px; }
+    .chip, .preset-chip{ padding:7px 12px; }
+
+    /* tables: tighter cells and a wrapping first column, so 3-4 chains fit next to it */
+    .table-wrap{ max-height:72vh; }
+    table.matrix{ font-size:12px; }
+    table.matrix th, table.matrix td{ padding:7px 7px; }
+    table.focus-table{ font-size:13px; }
+    table.focus-table th, table.focus-table td{ padding:8px 7px; }
+    table.matrix td.brand-cell, table.matrix th.brand-head{ white-space:normal; min-width:88px; max-width:112px; line-height:1.3; }
+    /* size on its own line under the brand instead of breaking "1,5 | l" mid-label */
+    .focus-vol{ display:block; white-space:nowrap; }
+    .focus-dot{ display:none; }
+
+    /* product lists: drop Tip and Veličina (the size is in the name anyway) so the
+       price and its 90-day change fit on screen next to the product */
+    #tbl th:nth-child(3), #tbl td:nth-child(3), #tbl th:nth-child(4), #tbl td:nth-child(4),
+    #tblPopular th:nth-child(3), #tblPopular td:nth-child(3), #tblPopular th:nth-child(4), #tblPopular td:nth-child(4){ display:none; }
+    #tbl th, #tbl td, #tblPopular th, #tblPopular td{ padding:8px 6px; font-size:12.5px; }
+    #tbl td:first-child, #tblPopular td:first-child{ min-width:130px; }
+    table.focus-table .pl-brand{ max-width:112px; font-size:10.5px; }
+    table.pl-table td.num{ min-width:104px; }
+    table.matrix thead th{ font-size:10px; letter-spacing:.02em; }
+  }
 </style>
 
 <div class="wrap">

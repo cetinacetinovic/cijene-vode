@@ -1904,7 +1904,7 @@
       });
       const mins = cells.filter(Boolean).map(list=> list[0].p);
       const minV = Math.min(...mins);
-      html += `<tr><td class="brand-cell">${escapeHtml(volumeBucketLabel(v))} <span class="focus-vol">· ${escapeHtml(wt)}</span></td>`;
+      html += `<tr><td class="brand-cell">${escapeHtml(volumeBucketLabel(v))} <span class="focus-vol"><span class="focus-dot">· </span>${escapeHtml(wt)}</span></td>`;
       cells.forEach((list,i)=>{
         if(!list){ html += '<td class="num empty-cell">–</td>'; return; }
         const chain = PRIVATE_LABEL_CHAINS[i];
@@ -1976,7 +1976,7 @@
       const vals = FOCUS_CHAINS.map(c=>{ const o=g.chains.get(c); return o ? chainShelfPrice(o.rows) : null; });
       const present = vals.filter(v=>v!==null);
       const minV = Math.min(...present);
-      html += `<tr><td class="brand-cell">${escapeHtml(brandLabel(g.brand))} <span class="focus-vol">· ${volumeBucketLabel(g.volKey)}</span></td>`;
+      html += `<tr><td class="brand-cell">${escapeHtml(brandLabel(g.brand))} <span class="focus-vol"><span class="focus-dot">· </span>${volumeBucketLabel(g.volKey)}</span></td>`;
       FOCUS_CHAINS.forEach((c,i)=>{
         const v = vals[i];
         if(v===null){ html += '<td class="num empty-cell">–</td>'; return; }
@@ -2265,7 +2265,7 @@
       legend.innerHTML=''; return;
     }
     shown.forEach(r=>{
-      html += `<tr><td class="brand-cell">${escapeHtml(brandLabel(r.brand))} <span class="focus-vol">· ${escapeHtml(volumeBucketLabel(r.volKey))}</span></td>`;
+      html += `<tr><td class="brand-cell">${escapeHtml(brandLabel(r.brand))} <span class="focus-vol"><span class="focus-dot">· </span>${escapeHtml(volumeBucketLabel(r.volKey))}</span></td>`;
       r.cells.forEach((cell,i)=>{
         if(!cell){ html += '<td class="num empty-cell">–</td>'; return; }
         const st = cell.st, v = growthValue(st);
@@ -2708,11 +2708,19 @@
     const links = Array.from(document.querySelectorAll('.secnav a'));
     const secs = links.map(a=>document.querySelector(a.getAttribute('href'))).filter(Boolean);
     if(secs.length===0) return;
+    const nav = document.querySelector('.secnav');
+    let lastId = null;
     const mark = ()=>{
       const y = window.scrollY + 140;
       let cur = secs[0];
       for(const el of secs){ if(el.offsetTop <= y) cur = el; }
       links.forEach(a=> a.setAttribute('aria-current', a.getAttribute('href')==='#'+cur.id ? 'true':'false'));
+      // on a phone the nav is one sideways-scrolling line: keep the current pill in view
+      if(cur.id !== lastId && nav && nav.scrollWidth > nav.clientWidth){
+        const a = links.find(l=> l.getAttribute('href')==='#'+cur.id);
+        if(a) nav.scrollTo({ left: a.offsetLeft - (nav.clientWidth - a.offsetWidth)/2, behavior:'smooth' });
+      }
+      lastId = cur.id;
     };
     window.addEventListener('scroll', mark, {passive:true});
     mark();
