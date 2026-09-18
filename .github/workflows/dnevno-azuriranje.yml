@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ['app/**']
+    paths: ['app/**', '.github/workflows/**']
 
 permissions:
   contents: write
