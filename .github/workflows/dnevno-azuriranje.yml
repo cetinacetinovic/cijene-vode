@@ -66,6 +66,13 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: main
+      # GitHub Pages kesira fajlove 10 min; bez verzije u URL-u preglednik zna
+      # uz novi index.html zadrzati stari app.js (npr. gumb bez koda iza sebe).
+      - name: Oznaci verziju skripti
+        run: |
+          v=$(git rev-parse --short HEAD)
+          sed -i -E "s/src=\"(app|data)\.js\"/src=\"\1.js?v=$v\"/" app/index.html
+          grep -o 'src="[a-z]*\.js?v=[0-9a-f]*"' app/index.html
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
