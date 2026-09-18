@@ -379,7 +379,7 @@
   // just shows Leda together with its producer, which is how it is recognised.
   const BRAND_LABELS = { 'LEDA': 'LEDA (NARDUM)', 'K CLASSIC': 'K CLASSIC (KAUFLAND)', 'SAGUARO': 'SAGUARO (LIDL)', 'NO BRAND': 'NO BRAND (EUROSPIN)',
     'S BUDGET': 'S-BUDGET (SPAR)', 'DESPAR': 'DESPAR (SPAR)', 'SPAR QUALITATSMARKE': 'SPAR',
-    'BLUES': 'BLUES (EUROSPIN)', 'GINEVRA': 'GINEVRA (EUROSPIN)', 'VODA RM': 'PLODINE' };
+    'BLUES': 'BLUES (EUROSPIN)', 'GINEVRA': 'GINEVRA (EUROSPIN)', 'VODA RM': 'PLODINE', 'ELAN': 'ELAN (PLODINE)' };
   function brandLabel(b){ return BRAND_LABELS[b] || b; }
   const DISCONTINUED_BRANDS = new Set(['KALA','KALNICKA']);
   // Brand/chain pairs that have been delisted: the chain no longer carries the
@@ -1824,10 +1824,10 @@
     lidl:     ['SAGUARO'],
     spar:     ['S BUDGET','DESPAR','SPAR QUALITATSMARKE','SPAR'],
     eurospin: ['NO BRAND','BLUES','GINEVRA'],
-    plodine:  ['VODA RM'],
+    plodine:  ['VODA RM','ELAN'],
   };
   const PRIVATE_LABEL_SHORT = { 'K CLASSIC':'K-Classic', 'SAGUARO':'Saguaro', 'S BUDGET':'S-Budget', 'DESPAR':'Despar',
-    'SPAR QUALITATSMARKE':'Spar', 'SPAR':'Spar', 'NO BRAND':'No Brand', 'BLUES':'Blues', 'GINEVRA':'Ginevra', 'VODA RM':'Plodine' };
+    'SPAR QUALITATSMARKE':'Spar', 'SPAR':'Spar', 'NO BRAND':'No Brand', 'BLUES':'Blues', 'GINEVRA':'Ginevra', 'VODA RM':'Plodine', 'ELAN':'Elan' };
   function isPrivateLabel(pi){
     const [chain, name] = PRODUCTS[pi];
     const labels = PRIVATE_LABELS[chain];
@@ -1855,7 +1855,7 @@
   function plArticleName(name){
     const s = (name||'')
       .replace(/\d+(?:[.,]\d+)?\s*(?:ml|l)\b/ig, '')
-      .replace(/\bPET\b|\bKLC\.?\s*(?:NMNP\.?)?|\bDESPAR\b|\bS-?BUDGET\b|\bSPAR\b|\bSAGUARO\b|\bPLODINE\b/ig, '')
+      .replace(/\bPET\b|\bKLC\.?\s*(?:NMNP\.?)?|\bDESPAR\b|\bS-?BUDGET\b|\bSPAR\b|\bSAGUARO\b|\bPLODINE\b|\bELAN\b/ig, '')
       .replace(/[\s,.\-]+$/,'').replace(/^[\s,.\-]+/,'').replace(/\s{2,}/g,' ').trim().toLowerCase();
     return s.charAt(0).toUpperCase() + s.slice(1);
   }
