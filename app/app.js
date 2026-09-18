@@ -1160,13 +1160,13 @@
   // date range — shared by the hero's delta/range cards and by the per-selection
   // price tiles below (much cheaper than scanning all of OBS per subset: walks only
   // each product's own observations via obsByProduct).
-  function buildByDate(idxList){
+  function buildByDate(idxList, fromIdx = CUR_DATE_FROM_IDX){
     const byDate = new Map();
     idxList.forEach(pi=>{
       const rows = obsByProduct.get(pi);
       if(!rows) return;
       for(const row of rows){
-        if(row[0] < CUR_DATE_FROM_IDX || row[0] > CUR_DATE_IDX) continue;
+        if(row[0] < fromIdx || row[0] > CUR_DATE_IDX) continue;
         const d = row[0];
         if(!byDate.has(d)) byDate.set(d,{sum:0,count:0});
         const o = byDate.get(d); o.sum+=shelfPrice(row); o.count++;
@@ -1176,7 +1176,7 @@
   }
   // the latest (closest to "do") available price for a subset — used per tile
   function latestForSubset(idxList){
-    const byDate = buildByDate(idxList);
+    const byDate = buildByDate(idxList, 0);
     const idxs = Array.from(byDate.keys()).sort((a,b)=>a-b);
     if(idxs.length===0) return null;
     const d = idxs[idxs.length-1];
@@ -1202,7 +1202,10 @@
 
   function renderHero(matchIdxs){
     const hero = document.getElementById('hero');
-    const byDate = buildByDate(matchIdxs);
+    // The top of the page is a snapshot "as of" one day, so it ignores "od" -
+    // otherwise narrowing the period elsewhere (e.g. in Akcije) would silently
+    // empty the 90-day comparison here.
+    const byDate = buildByDate(matchIdxs, 0);
     const activeDateIdxs = Array.from(byDate.keys()).sort((a,b)=>a-b);
     if(activeDateIdxs.length===0){
       hero.innerHTML = '<div class="hero-main"><div class="hero-label">Cijena vode</div><div class="hero-value" style="font-size:22px;color:var(--ink-muted)">Nema podataka za odabrani filtar</div></div>';
@@ -1236,40 +1239,29 @@
       </div>`;
     }
 
-    // Range card instead of a "since day one" delta: early weeks had far fewer chains
-    // reporting, so a like-for-like % change from the very first sample would be
-    // comparing different baskets of products, not a real price move.
-    let rangeMin=Infinity, rangeMax=-Infinity, rangeMinDate=null, rangeMaxDate=null;
-    activeDateIdxs.forEach(i=>{
-      const avg = byDate.get(i).sum/byDate.get(i).count;
-      if(avg<rangeMin){ rangeMin=avg; rangeMinDate=DATES[i]; }
-      if(avg>rangeMax){ rangeMax=avg; rangeMaxDate=DATES[i]; }
-    });
-    // the period is set right here as well as in the filter panel below, since this
-    // card is what makes you want to change it
-    const opts = (sel)=> DATES.map(d=>`<option value="${d}"${d===sel?' selected':''}>${fmtDate(d)}</option>`).join('');
-    const rangeCard = `<div class="delta-card">
-      <span class="hero-label">Raspon u odabranom razdoblju</span>
-      <div class="delta-row" style="font-family:'IBM Plex Mono',monospace; font-size:15px; font-weight:600; font-variant-numeric:tabular-nums;">${fmtEUR(rangeMin)} – ${fmtEUR(rangeMax)}</div>
-      <span class="delta-context">tjedni prosjeci, ${fmtDateShort(rangeMinDate)} – ${fmtDateShort(rangeMaxDate)}</span>
-      <div class="hero-range">
-        <select id="heroDateFrom" aria-label="Od datuma">${opts(state.dateFrom)}</select>
-        <span class="date-range-sep">–</span>
-        <select id="heroDateTo" aria-label="Do datuma">${opts(state.dateTo)}</select>
-      </div>
+    // One day, not a range: everything up here shows prices as of a single date.
+    // Period pickers (od–do) live with the sections that actually use a period.
+    const newestIso = DATES[DATES.length-1];
+    const dayOpts = DATES.slice().reverse().map(d=>`<option value="${d}"${d===state.dateTo?' selected':''}>${fmtDate(d)}</option>`).join('');
+    const dayCard = `<div class="delta-card">
+      <span class="hero-label">Stanje na dan</span>
+      <div class="hero-range"><select id="heroDate" aria-label="Stanje na dan">${dayOpts}</select></div>
+      <span class="delta-context">${state.dateTo===newestIso
+        ? 'najnoviji dostupni podaci'
+        : `<button type="button" class="preset-chip" id="heroDateNewest">Na najnoviji (${fmtDateShort(newestIso)})</button>`}</span>
     </div>`;
 
     hero.innerHTML = `
       ${renderPriceCard(matchIdxs, latestAvg, latestDate, byDate.get(latestIdx).count)}
       ${deltaCard('U odnosu na prije 90 dana', from90)}
-      ${rangeCard}
+      ${dayCard}
     `;
     // the hero is rebuilt on every render, so these are always fresh elements —
     // binding here cannot accumulate handlers
-    const hFrom = document.getElementById('heroDateFrom');
-    const hTo   = document.getElementById('heroDateTo');
-    if(hFrom) hFrom.addEventListener('change', ()=> setDateFrom(hFrom.value));
-    if(hTo)   hTo.addEventListener('change', ()=> setDateTo(hTo.value));
+    const hDay = document.getElementById('heroDate');
+    const hNewest = document.getElementById('heroDateNewest');
+    if(hDay) hDay.addEventListener('change', ()=> setDateTo(hDay.value));
+    if(hNewest) hNewest.addEventListener('click', ()=> setDateTo(newestIso));
   }
 
   // Left hero card: a single "cijena na datum" number by default, or — the moment
@@ -1285,11 +1277,7 @@
     if(!brandsExplicit && !volumesExplicit && !chainsExplicit){
       const brandCard = renderHeroBrandsCard(fallbackDate);
       if(brandCard) return brandCard;
-      const isFullRange = state.dateFrom===DATES[0] && state.dateTo===DATES[DATES.length-1];
-      const isFromDefault = state.dateFrom===DATES[0];
-      const heroLabel = isFullRange ? 'Cijena vode danas'
-        : isFromDefault ? 'Cijena vode na odabrani datum'
-        : 'Cijena vode u odabranom razdoblju';
+      const heroLabel = state.dateTo===DATES[DATES.length-1] ? 'Cijena vode danas' : 'Cijena vode na odabrani datum';
       return `<div class="hero-main">
         <span class="hero-label">${heroLabel}</span>
         <div class="hero-value">${fmtEUR(fallbackAvg)}<small>/ kom</small></div>
