@@ -34,20 +34,31 @@
   // water only — flavoured ("aromatizirana") and unresolved ("nepoznato") products
   // are dropped at the OBS source so they disappear from every panel at once,
   // instead of relying on each panel to separately apply the type filter.
-  const FLAVOR_WORDS = /\b(limun|limet|malin|jagod|guav|kupin|marakuj|mango|brusnic|borovnic|ment|kokos|naranc|narandz|breskv|kivano|kiwano|dunj|krus|ribiz|jabuk|dumbir|bazg|vanilij|lubenic|antiox|detox|kolagen|collagen|immuno|focus|antistres|refresh|optimist|energy|happy|arom|sens|sen\.|tonic|vit)/;
+  const FLAVOR_WORDS = /\b(limun|limet|malin|jagod|guav|kupin|marakuj|mango|brusnic|borovnic|ment|kokos|naranc|narandz|breskv|kivano|kiwano|dunj|krus|ribiz|jabuk|dumbir|bazg|vanilij|lubenic|antiox|detox|kolagen|collagen|immuno|focus|antistres|refresh|optimist|energy|happy|arom|sens|sen\.|tonic|vit|grejp|aloe|okus|oku\.|aro\.|sumsk|secer)/;
   // things that merely contain the word "voda" but are not drinking water:
   // cosmetics, mouthwash, cologne, whipped cream, drain cleaner, pet supplies
   const NON_WATER_NOISE = /\b(povodac|ambal|odcep|odvod|pistolj|casa|case|micel|micer|termaln|uriage|garnier|violeta|tesori|duopack|slag|toaletn|kolonjsk|zubn|dolcela|oral b|gillette|balea|byphasse|eveline|nivea|ziaja|avene|simple|mixa|ulje|iliada|parf)/;
   const NON_WATER_PHRASES = /(voda za usta|voda\/usta|voda za ispiranje|vodaza|mic\.voda|micel\.voda)/;
   function inferWtype(pIdx){
     const wt = PRODUCTS[pIdx][5];
-    if(wt !== 'nepoznato') return wt;
+    if(wt === 'aromatizirana') return wt;
     const name = stripDia(PRODUCTS[pIdx][1] || '');
-    if(!/\bvoda\b/.test(name)) return wt;
-    if(NON_WATER_NOISE.test(name) || NON_WATER_PHRASES.test(name)) return wt;
-    if(/negazir/.test(name)) return 'negazirana';
-    if(/\bgazir/.test(name)) return 'gazirana';
-    if(FLAVOR_WORDS.test(name)) return 'aromatizirana';
+    if(wt === 'nepoznato'){
+      if(!/\bvoda\b/.test(name)) return wt;
+      if(NON_WATER_NOISE.test(name) || NON_WATER_PHRASES.test(name)) return wt;
+      if(FLAVOR_WORDS.test(name)) return 'aromatizirana';
+    }
+    // When the name says it outright, the name wins over the source's type column,
+    // which files e.g. Lidl "Mineralna voda negazirana", Kaufland "KLC Stolna voda
+    // negazirana 2 l" and Despar "VODA NEGAZIRANA" as gazirana.
+    if(/negaz|\bneg\b/.test(name)) return 'negazirana';
+    if(/\bgaz/.test(name)) return 'gazirana';
+    if(wt !== 'nepoznato') return wt;
+    // No cue either way. A small bottle sold as "mineralna" is the sparkling one in
+    // Croatian shops (Despar "VODA MINERALNA 0,5 L" sits next to its "VODA
+    // NEGAZIRANA 0,5 L"); big 5-7 l mineral water is still.
+    const litres = parseFloat((name.match(/(\d+(?:[.,]\d+)?)\s*l\b/)||[])[1]?.replace(',','.'));
+    if(/mineral/.test(name) && !(litres > 2)) return 'gazirana';
     return 'negazirana';
   }
   const PRODUCT_WTYPE = PRODUCTS.map((p,i)=> inferWtype(i));
@@ -1839,50 +1850,75 @@
     }
     return out;
   }
+  // short readable article name for a cell: drop the size, "PET" and the label's
+  // own prefix, which the column and the brand line already say
+  function plArticleName(name){
+    const s = (name||'')
+      .replace(/\d+(?:[.,]\d+)?\s*(?:ml|l)\b/ig, '')
+      .replace(/\bPET\b|\bKLC\.?\s*(?:NMNP\.?)?|\bDESPAR\b|\bS-?BUDGET\b|\bSPAR\b|\bSAGUARO\b|\bPLODINE\b/ig, '')
+      .replace(/[\s,.\-]+$/,'').replace(/^[\s,.\-]+/,'').replace(/\s{2,}/g,' ').trim().toLowerCase();
+    return s.charAt(0).toUpperCase() + s.slice(1);
+  }
+  const PL_TYPE_ORDER = { negazirana:0, gazirana:1 };
   function renderPrivateLabelMatrix(wrap, note){
-    const byVol = new Map();   // volKey -> Map(chain -> [rows])
+    // Still and sparkling are separate rows: the same label often prices them
+    // differently (Kaufland K-Classic 0,5 l: negazirana €0,45, gazirana €0,36).
+    const groups = new Map();   // `${volKey}|${wtype}` -> Map(chain -> [rows])
     buildRows(getPrivateLabelIdxs()).forEach(r=>{
       if(r.volKey==='unknown' || r.volKey==='pack') return;
-      if(!byVol.has(r.volKey)) byVol.set(r.volKey, new Map());
-      const m = byVol.get(r.volKey);
+      const key = r.volKey + '|' + r.wtype;
+      if(!groups.has(key)) groups.set(key, new Map());
+      const m = groups.get(key);
       if(!m.has(r.chain)) m.set(r.chain, []);
       m.get(r.chain).push(r);
     });
-    const vols = Array.from(byVol.keys()).sort((a,b)=> VOLUME_ORDER.get(a)-VOLUME_ORDER.get(b));
-    if(vols.length===0){
+    const keys = Array.from(groups.keys()).sort((a,b)=>{
+      const [va,ta] = a.split('|'), [vb,tb] = b.split('|');
+      return (VOLUME_ORDER.get(va)-VOLUME_ORDER.get(vb)) || (PL_TYPE_ORDER[ta]-PL_TYPE_ORDER[tb]);
+    });
+    if(keys.length===0){
       wrap.innerHTML = '<div class="empty">Nema robnih marki za odabrani filtar.</div>';
       note.textContent = '';
       return;
     }
-    note.textContent = `Robne marke · ${vols.length} veličina × ${PRIVATE_LABEL_CHAINS.length} lanaca`;
+    note.textContent = `Robne marke · ${keys.length} ${pluralHr(keys.length,'artikl','artikla','artikala')} (veličina × tip) × ${PRIVATE_LABEL_CHAINS.length} lanaca`;
 
-    let html = '<table class="matrix focus-table"><thead>';
-    html += `<tr class="grouprow"><th class="brand-head"></th><th colspan="${PRIVATE_LABEL_CHAINS.length}">najjeftinija robna marka lanca</th></tr>`;
-    html += '<tr class="colrow"><th class="brand-head">Veličina</th>';
+    let html = '<table class="matrix focus-table pl-table"><thead>';
+    html += `<tr class="grouprow"><th class="brand-head"></th><th colspan="${PRIVATE_LABEL_CHAINS.length}">robne marke lanca · svaki artikl posebno</th></tr>`;
+    html += '<tr class="colrow"><th class="brand-head">Veličina · tip</th>';
     PRIVATE_LABEL_CHAINS.forEach(c=> html += `<th>${chainLabel(c)}</th>`);
     html += '</tr></thead><tbody>';
-    vols.forEach(v=>{
-      const m = byVol.get(v);
-      // per chain: each own-label article at the price most of its stores charge,
-      // then the cheapest of them
-      const picks = PRIVATE_LABEL_CHAINS.map(c=>{
+    keys.forEach(key=>{
+      const [v, wt] = key.split('|');
+      const m = groups.get(key);
+      // every distinct own-label article of this size and type, cheapest first;
+      // the same article re-listed under a second SKU (identical name and price)
+      // is shown once
+      const cells = PRIVATE_LABEL_CHAINS.map(c=>{
         const rows = m.get(c);
         if(!rows) return null;
-        const priced = rows.map(r=>({ r, p: chainShelfPrice([r]) })).sort((a,b)=> a.p-b.p);
-        return { best: priced[0], all: priced };
+        const seen = new Set();
+        return rows.map(r=>({ r, p: chainShelfPrice([r]) }))
+          .sort((a,b)=> a.p-b.p)
+          .filter(x=>{ const k = plArticleName(x.r.name)+'|'+x.p; if(seen.has(k)) return false; seen.add(k); return true; });
       });
-      const present = picks.filter(Boolean).map(x=>x.best.p);
-      const minV = Math.min(...present);
-      html += `<tr><td class="brand-cell">${escapeHtml(volumeBucketLabel(v))}</td>`;
-      picks.forEach((pk,i)=>{
-        if(!pk){ html += '<td class="num empty-cell">–</td>'; return; }
-        const r = pk.best.r;
-        const cheap = present.length>1 && Math.abs(pk.best.p-minV)<1e-9;
-        const brandShort = PRIVATE_LABEL_SHORT[PRODUCT_BRAND[r.pi]] || (PRIVATE_LABEL_CHAINS[i]==='plodine' ? 'Plodine' : brandLabel(PRODUCT_BRAND[r.pi]));
-        let title = `${chainLabel(PRIVATE_LABEL_CHAINS[i])} · ` + pk.all.map(x=>`${x.r.name}: ${fmtEUR(x.p)} (${x.r.storeCount} posl.)`).join('\n');
-        if(r.onPromo) title += ` · NA AKCIJI${r.promoDepth!==null?' (−'+Math.round(r.promoDepth*100)+'%)':''}`;
-        const cls = 'num' + (cheap?' focus-cheap':'') + (r.onPromo?' focus-promo':'');
-        html += `<td class="${cls}" title="${escapeHtml(title)}">${fmtEUR(pk.best.p)}<span class="pl-brand">${escapeHtml(brandShort)}</span></td>`;
+      const mins = cells.filter(Boolean).map(list=> list[0].p);
+      const minV = Math.min(...mins);
+      html += `<tr><td class="brand-cell">${escapeHtml(volumeBucketLabel(v))} <span class="focus-vol">· ${escapeHtml(wt)}</span></td>`;
+      cells.forEach((list,i)=>{
+        if(!list){ html += '<td class="num empty-cell">–</td>'; return; }
+        const chain = PRIVATE_LABEL_CHAINS[i];
+        const cheap = mins.length>1 && Math.abs(list[0].p-minV)<1e-9;
+        // one article: highlight the whole cell as usual; several: only the cheapest
+        const cellCheap = cheap && list.length===1;
+        const items = list.map(({r,p}, k)=>{
+          const brandShort = PRIVATE_LABEL_SHORT[PRODUCT_BRAND[r.pi]] || (chain==='plodine' ? 'Plodine' : brandLabel(PRODUCT_BRAND[r.pi]));
+          const promo = r.onPromo ? ` <span class="pl-promo">akcija${r.promoDepth!==null?' −'+Math.round(r.promoDepth*100)+'%':''}</span>` : '';
+          const title = `${chainLabel(chain)} · ${r.name}: ${fmtEUR(p)} (${r.storeCount} posl.)`;
+          const itemCheap = cheap && !cellCheap && k===0 ? ' pl-cheap' : '';
+          return `<span class="pl-item${itemCheap}" title="${escapeHtml(title)}">${fmtEUR(p)}${promo}<span class="pl-brand">${escapeHtml(brandShort)} · ${escapeHtml(plArticleName(r.name))}</span></span>`;
+        }).join('');
+        html += `<td class="num${cellCheap?' focus-cheap':''}">${items}</td>`;
       });
       html += '</tr>';
     });
@@ -1896,7 +1932,7 @@
     const isPrivate = state.focusMode==='private';
     document.getElementById('focusTitle').textContent = isPrivate ? 'Robne marke u najjačim dućanima' : 'Najpopularnije marke u najjačim dućanima';
     document.getElementById('focusPurpose').textContent = isPrivate
-      ? 'Vlastite marke lanaca jedna do druge: jedan redak = veličina, u ćeliji najjeftinija robna marka tog lanca.'
+      ? 'Vlastite marke lanaca jedna do druge: jedan redak = veličina i tip, u ćeliji svaki artikl robne marke tog lanca.'
       : 'Tko je koliko skup: jedan redak = marka + veličina, jedan stupac = lanac, u ćeliji zadnja cijena.';
     if(isPrivate) return renderPrivateLabelMatrix(wrap, note);
     const rows = buildRows(getPopularProductIdxs());

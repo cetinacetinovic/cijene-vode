@@ -244,7 +244,12 @@
   /* the Raspon column left, so the freed width goes into a bigger read on this table */
   table.focus-table{ font-size:15px; }
   table.focus-table th, table.focus-table td{ padding:11px 16px; }
-  table.focus-table .pl-brand{ display:block; font-family:"IBM Plex Sans",sans-serif; font-size:11px; font-weight:500; color:var(--ink-muted); margin-top:2px; }
+  table.focus-table .pl-brand{ display:block; font-family:"IBM Plex Sans",sans-serif; font-size:11px; font-weight:500; color:var(--ink-muted); margin-top:2px; white-space:normal; max-width:190px; margin-left:auto; line-height:1.3; }
+  table.pl-table td.num{ vertical-align:top; }
+  table.pl-table .pl-item{ display:block; }
+  table.pl-table .pl-item.pl-cheap{ background:var(--accent-soft); color:var(--accent-ink); font-weight:600; border-radius:6px; padding:4px 6px; margin:-4px -6px; }
+  table.pl-table .pl-item + .pl-item{ margin-top:8px; padding-top:8px; border-top:1px dashed var(--line); }
+  table.pl-table .pl-promo{ font-family:"IBM Plex Sans",sans-serif; font-size:10px; font-weight:600; color:var(--yellow-ink); background:var(--yellow-soft); border-radius:4px; padding:1px 4px; margin-left:4px; }
   table.matrix thead th{ position:sticky; top:0; background:var(--surface-raised); z-index:2; cursor:default; }
   table.matrix td.brand-cell, table.matrix th.brand-head{
     position:sticky; left:0; background:var(--surface-raised); z-index:1;
@@ -513,7 +518,7 @@
       </div>
     </div>
     <span class="panel-note" id="focusNote" style="display:block;margin:-6px 0 10px;"></span>
-    <details class="howto"><summary>Kako čitati ovu tablicu</summary><p class="howto-body">Zadnja cijena istog artikla (marka + veličina) u deset najbitnijih lanaca: Konzum, Kaufland, Lidl, Spar, Plodine, Studenac, Ribola, Tommy, Metro i Eurospin. <span class="focus-legend-cheap">Najjeftiniji lanac</span> u retku je istaknut, a cijena <span class="focus-legend-promo">na akciji</span> je požućena. Prikaz ne ovisi o filteru trgovina ispod; ovisi o razdoblju, tipu vode, veličini i pretrazi.<br><br><strong>Robne marke</strong> uspoređuje vlastite marke lanaca: Kaufland (K-Classic), Lidl (Saguaro), Spar (S-Budget, Despar, Spar), Eurospin (No Brand, Blues, Ginevra) i Plodine. Jedan redak = veličina, u ćeliji je najjeftinija robna marka tog lanca u toj veličini (naziv marke piše ispod cijene). Destilirana voda nije uključena.</p></details>
+    <details class="howto"><summary>Kako čitati ovu tablicu</summary><p class="howto-body">Zadnja cijena istog artikla (marka + veličina) u deset najbitnijih lanaca: Konzum, Kaufland, Lidl, Spar, Plodine, Studenac, Ribola, Tommy, Metro i Eurospin. <span class="focus-legend-cheap">Najjeftiniji lanac</span> u retku je istaknut, a cijena <span class="focus-legend-promo">na akciji</span> je požućena. Prikaz ne ovisi o filteru trgovina ispod; ovisi o razdoblju, tipu vode, veličini i pretrazi.<br><br><strong>Robne marke</strong> uspoređuje vlastite marke lanaca: Kaufland (K-Classic), Lidl (Saguaro), Spar (S-Budget, Despar, Spar), Eurospin (No Brand, Blues, Ginevra) i Plodine. Jedan redak = veličina i tip (negazirana / gazirana posebno, jer iste marke često različito naplaćuju jednu i drugu). U ćeliji je svaki artikl robne marke tog lanca posebno, od najjeftinijeg, s markom i nazivom ispod cijene. Istaknut je najjeftiniji lanac u retku. Destilirana voda i voda s okusom nisu uključene.</p></details>
     <div class="tbl-legend"><span class="lgd"><i style="background:var(--accent)"></i>najjeftiniji lanac u retku</span><span class="lgd"><i style="background:var(--yellow-ink)"></i>cijena je na akciji</span><span class="lgd"><i style="background:var(--line-strong)"></i>lanac nema taj artikl</span></div>
     <div class="table-wrap" id="focusMatrixWrap"></div>
 
