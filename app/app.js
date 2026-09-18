@@ -366,7 +366,9 @@
   // and the brand picker — so they don't clutter a view of the live market.
   // Display-only names. The brand key stays as it is everywhere in the logic; this
   // just shows Leda together with its producer, which is how it is recognised.
-  const BRAND_LABELS = { 'LEDA': 'LEDA (NARDUM)', 'K CLASSIC': 'K CLASSIC (KAUFLAND)', 'SAGUARO': 'SAGUARO (LIDL)', 'NO BRAND': 'NO BRAND (EUROSPIN)' };
+  const BRAND_LABELS = { 'LEDA': 'LEDA (NARDUM)', 'K CLASSIC': 'K CLASSIC (KAUFLAND)', 'SAGUARO': 'SAGUARO (LIDL)', 'NO BRAND': 'NO BRAND (EUROSPIN)',
+    'S BUDGET': 'S-BUDGET (SPAR)', 'DESPAR': 'DESPAR (SPAR)', 'SPAR QUALITATSMARKE': 'SPAR',
+    'BLUES': 'BLUES (EUROSPIN)', 'GINEVRA': 'GINEVRA (EUROSPIN)', 'VODA RM': 'PLODINE' };
   function brandLabel(b){ return BRAND_LABELS[b] || b; }
   const DISCONTINUED_BRANDS = new Set(['KALA','KALNICKA']);
   // Brand/chain pairs that have been delisted: the chain no longer carries the
@@ -604,7 +606,7 @@
     promoMetric:"count", promoBrand:null, page:0, sortKey:"name", sortDir:1, pageSize:50,
     tierBrand:"", tierVol:"",
     promoFilterBrand:"", promoFilterVol:"",
-    popularBrand:"", popularChain:"",
+    popularBrand:"", popularChain:"", focusMode:"all",
     growthBrand:"", growthVol:"", growthHold:3, growthMetric:"pct", growthScope:"changed",
     growthFrom: DATES[0], growthTo: DATES[DATES.length-1] };
   let CUR_DATE_FROM_IDX = 0;
@@ -1801,9 +1803,102 @@
     </div>`;
   }
 
+  // ---- "Robne marke" view of table 01 ----
+  // Each chain's own labels. Every one lives in exactly one chain, so a row per
+  // brand would be a single filled cell; instead a row is a size and each chain
+  // column shows its cheapest own-label water of that size, head to head.
+  const PRIVATE_LABEL_CHAINS = ['kaufland','lidl','spar','eurospin','plodine'].filter(c=>CHAINS.includes(c));
+  const PRIVATE_LABELS = {
+    kaufland: ['K CLASSIC'],
+    lidl:     ['SAGUARO'],
+    spar:     ['S BUDGET','DESPAR','SPAR QUALITATSMARKE','SPAR'],
+    eurospin: ['NO BRAND','BLUES','GINEVRA'],
+    plodine:  ['VODA RM'],
+  };
+  const PRIVATE_LABEL_SHORT = { 'K CLASSIC':'K-Classic', 'SAGUARO':'Saguaro', 'S BUDGET':'S-Budget', 'DESPAR':'Despar',
+    'SPAR QUALITATSMARKE':'Spar', 'SPAR':'Spar', 'NO BRAND':'No Brand', 'BLUES':'Blues', 'GINEVRA':'Ginevra', 'VODA RM':'Plodine' };
+  function isPrivateLabel(pi){
+    const [chain, name] = PRODUCTS[pi];
+    const labels = PRIVATE_LABELS[chain];
+    if(!labels) return false;
+    // distilled water is sold under these labels too, but it is not drinking water
+    // and would pass for the chain's cheapest big bottle
+    if(/destil/i.test(stripDia(name))) return false;
+    if(labels.includes(PRODUCT_BRAND[pi])) return true;
+    // Plodine files its own water under a supplier code; the name carries the label
+    return chain==='plodine' && /\bplodine\b/i.test(stripDia(name));
+  }
+  function getPrivateLabelIdxs(){
+    const out = [];
+    for(let pi=0; pi<PRODUCTS.length; pi++){
+      if(!isPrivateLabel(pi) || SHADOW_LISTINGS.has(pi)) continue;
+      if(!state.types.has(PRODUCT_WTYPE[pi])) continue;
+      if(state.volumes.size>0 && !state.volumes.has(PRODUCT_VOLUME_KEY[pi])) continue;
+      if(state.q && !stripDia(PRODUCTS[pi][1]+' '+PRODUCTS[pi][2]).includes(state.q)) continue;
+      out.push(pi);
+    }
+    return out;
+  }
+  function renderPrivateLabelMatrix(wrap, note){
+    const byVol = new Map();   // volKey -> Map(chain -> [rows])
+    buildRows(getPrivateLabelIdxs()).forEach(r=>{
+      if(r.volKey==='unknown' || r.volKey==='pack') return;
+      if(!byVol.has(r.volKey)) byVol.set(r.volKey, new Map());
+      const m = byVol.get(r.volKey);
+      if(!m.has(r.chain)) m.set(r.chain, []);
+      m.get(r.chain).push(r);
+    });
+    const vols = Array.from(byVol.keys()).sort((a,b)=> VOLUME_ORDER.get(a)-VOLUME_ORDER.get(b));
+    if(vols.length===0){
+      wrap.innerHTML = '<div class="empty">Nema robnih marki za odabrani filtar.</div>';
+      note.textContent = '';
+      return;
+    }
+    note.textContent = `Robne marke · ${vols.length} veličina × ${PRIVATE_LABEL_CHAINS.length} lanaca`;
+
+    let html = '<table class="matrix focus-table"><thead>';
+    html += `<tr class="grouprow"><th class="brand-head"></th><th colspan="${PRIVATE_LABEL_CHAINS.length}">najjeftinija robna marka lanca</th></tr>`;
+    html += '<tr class="colrow"><th class="brand-head">Veličina</th>';
+    PRIVATE_LABEL_CHAINS.forEach(c=> html += `<th>${chainLabel(c)}</th>`);
+    html += '</tr></thead><tbody>';
+    vols.forEach(v=>{
+      const m = byVol.get(v);
+      // per chain: each own-label article at the price most of its stores charge,
+      // then the cheapest of them
+      const picks = PRIVATE_LABEL_CHAINS.map(c=>{
+        const rows = m.get(c);
+        if(!rows) return null;
+        const priced = rows.map(r=>({ r, p: chainShelfPrice([r]) })).sort((a,b)=> a.p-b.p);
+        return { best: priced[0], all: priced };
+      });
+      const present = picks.filter(Boolean).map(x=>x.best.p);
+      const minV = Math.min(...present);
+      html += `<tr><td class="brand-cell">${escapeHtml(volumeBucketLabel(v))}</td>`;
+      picks.forEach((pk,i)=>{
+        if(!pk){ html += '<td class="num empty-cell">–</td>'; return; }
+        const r = pk.best.r;
+        const cheap = present.length>1 && Math.abs(pk.best.p-minV)<1e-9;
+        const brandShort = PRIVATE_LABEL_SHORT[PRODUCT_BRAND[r.pi]] || (PRIVATE_LABEL_CHAINS[i]==='plodine' ? 'Plodine' : brandLabel(PRODUCT_BRAND[r.pi]));
+        let title = `${chainLabel(PRIVATE_LABEL_CHAINS[i])} · ` + pk.all.map(x=>`${x.r.name}: ${fmtEUR(x.p)} (${x.r.storeCount} posl.)`).join('\n');
+        if(r.onPromo) title += ` · NA AKCIJI${r.promoDepth!==null?' (−'+Math.round(r.promoDepth*100)+'%)':''}`;
+        const cls = 'num' + (cheap?' focus-cheap':'') + (r.onPromo?' focus-promo':'');
+        html += `<td class="${cls}" title="${escapeHtml(title)}">${fmtEUR(pk.best.p)}<span class="pl-brand">${escapeHtml(brandShort)}</span></td>`;
+      });
+      html += '</tr>';
+    });
+    html += '</tbody></table>';
+    wrap.innerHTML = html;
+  }
+
   function renderFocusMatrix(){
     const wrap = document.getElementById('focusMatrixWrap');
     const note = document.getElementById('focusNote');
+    const isPrivate = state.focusMode==='private';
+    document.getElementById('focusTitle').textContent = isPrivate ? 'Robne marke u najjačim dućanima' : 'Najpopularnije marke u najjačim dućanima';
+    document.getElementById('focusPurpose').textContent = isPrivate
+      ? 'Vlastite marke lanaca jedna do druge: jedan redak = veličina, u ćeliji najjeftinija robna marka tog lanca.'
+      : 'Tko je koliko skup: jedan redak = marka + veličina, jedan stupac = lanac, u ćeliji zadnja cijena.';
+    if(isPrivate) return renderPrivateLabelMatrix(wrap, note);
     const rows = buildRows(getPopularProductIdxs());
     const groups = new Map(); // `${brand}||${volKey}` -> {brand, volKey, chains: Map(chain -> {sum,count,names})}
     rows.forEach(r=>{
@@ -2505,6 +2600,13 @@
       + `<span>plići → dublji (do ${Math.round(maxDepth*100)}%)</span>`;
   }
 
+  document.getElementById('focusModeTabs').addEventListener('click', (e)=>{
+    const btn = e.target.closest('.tab-btn'); if(!btn) return;
+    state.focusMode = btn.dataset.mode;
+    document.querySelectorAll('#focusModeTabs .tab-btn').forEach(b=>
+      b.setAttribute('aria-selected', b.dataset.mode===state.focusMode?'true':'false'));
+    renderFocusMatrix();
+  });
   document.getElementById('promoMetricTabs').addEventListener('click', (e)=>{
     const btn = e.target.closest('.tab-btn'); if(!btn) return;
     state.promoMetric = btn.dataset.metric;
