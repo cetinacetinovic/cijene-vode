@@ -1818,8 +1818,12 @@
   // Each chain's own labels. Every one lives in exactly one chain, so a row per
   // brand would be a single filled cell; instead a row is a size and each chain
   // column shows its cheapest own-label water of that size, head to head.
-  const PRIVATE_LABEL_CHAINS = ['kaufland','lidl','spar','eurospin','plodine'].filter(c=>CHAINS.includes(c));
+  const PRIVATE_LABEL_CHAINS = ['konzum','kaufland','lidl','spar','eurospin','plodine'].filter(c=>CHAINS.includes(c));
   const PRIVATE_LABELS = {
+    // Konzum's own-label water is thin: of its private labels only "Moj dan"
+    // is drinking water ("K Plus" carries no water at all, "Dax" is distilled
+    // and the destil check below drops it), so the column fills one row.
+    konzum:   ['MOJ DAN','K PLUS'],
     kaufland: ['K CLASSIC'],
     lidl:     ['SAGUARO'],
     spar:     ['S BUDGET','DESPAR','SPAR QUALITATSMARKE','SPAR'],
@@ -1827,7 +1831,8 @@
     plodine:  ['VODA RM','ELAN'],
   };
   const PRIVATE_LABEL_SHORT = { 'K CLASSIC':'K-Classic', 'SAGUARO':'Saguaro', 'S BUDGET':'S-Budget', 'DESPAR':'Despar',
-    'SPAR QUALITATSMARKE':'Spar', 'SPAR':'Spar', 'NO BRAND':'No Brand', 'BLUES':'Blues', 'GINEVRA':'Ginevra', 'VODA RM':'Plodine', 'ELAN':'Elan' };
+    'SPAR QUALITATSMARKE':'Spar', 'SPAR':'Spar', 'NO BRAND':'No Brand', 'BLUES':'Blues', 'GINEVRA':'Ginevra', 'VODA RM':'Plodine', 'ELAN':'Elan',
+    'MOJ DAN':'Moj dan', 'K PLUS':'K Plus' };
   function isPrivateLabel(pi){
     const [chain, name] = PRODUCTS[pi];
     const labels = PRIVATE_LABELS[chain];
@@ -1855,7 +1860,7 @@
   function plArticleName(name){
     const s = (name||'')
       .replace(/\d+(?:[.,]\d+)?\s*(?:ml|l)\b/ig, '')
-      .replace(/\bPET\b|\bKLC\.?\s*(?:NMNP\.?)?|\bDESPAR\b|\bS-?BUDGET\b|\bSPAR\b|\bSAGUARO\b|\bPLODINE\b|\bELAN\b/ig, '')
+      .replace(/\bPET\b|\bKLC\.?\s*(?:NMNP\.?)?|\bDESPAR\b|\bS-?BUDGET\b|\bSPAR\b|\bSAGUARO\b|\bPLODINE\b|\bELAN\b|\bMOJ\s+DAN\b|\bK\s*PLUS\b/ig, '')
       .replace(/[\s,.\-]+$/,'').replace(/^[\s,.\-]+/,'').replace(/\s{2,}/g,' ').trim().toLowerCase();
     return s.charAt(0).toUpperCase() + s.slice(1);
   }
