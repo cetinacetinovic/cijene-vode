@@ -1,15 +1,7 @@
-﻿Promjene cijena za 2026-10-02 (14 artikala):
+﻿Promjene cijena za 2026-10-04 (6 artikala):
 studenac - AWT-RADENSKA (VODA GAZ. RADENSKA): 1.42 EUR -> 1.05 EUR (-26.1%) [pojeftinilo]
 ribola - CETINA (VODA CETINA 15 l NEGAZIRANA): 6.12 EUR -> 7.49 EUR (+22.4%) [poskupjelo]
-dm - Denkmit (Denkmit voda za glačalo 1 l): 0.95 EUR -> 0.75 EUR (-21.1%) [pojeftinilo]
 tommy - JAMNICA PLUS D.O.O. (VODA NEGAZ.0,33 L JANA PET): 0.75 EUR -> 0.62 EUR (-17.3%) [pojeftinilo]
-trgovina-krk - JAMNICA PLUS D.O.O. (JANA IZVORSKA VODA 1,5 L PVC JAMNICA): 1.19 EUR -> 0.99 EUR (-16.8%) [pojeftinilo]
-trgovina-krk - JAMNICA PLUS D.O.O. (JAMNICA VODA 1 L JAMNICA): 0.89 EUR -> 0.79 EUR (-11.2%) [pojeftinilo]
-ribola - DONAT (DONAT MG 1 l PET GAZIRANA VODA): 2.19 EUR -> 2.40 EUR (+9.6%) [poskupjelo]
-plodine - DONAT (VODA DONAT 1 L PET): 2.19 EUR -> 2.39 EUR (+9.1%) [poskupjelo]
 bure -  (VODA CETINA 7 L): 1.75 EUR -> 1.90 EUR (+8.6%) [poskupjelo]
-plodine - DONAT (VODA DONAT 0,5 L PET): 1.39 EUR -> 1.49 EUR (+7.2%) [poskupjelo]
-djelo_vodice -  (MINERALNA VODA DONAT MG 0,5L PET): 1.59 EUR -> 1.49 EUR (-6.3%) [pojeftinilo]
-ribola - DONAT (DONAT MG 0,50 l PET GAZIRANA VODA): 1.39 EUR -> 1.46 EUR (+5.0%) [poskupjelo]
 trgovina-krk -  (VODA IZVORSKA CETINA 7 l): 2.59 EUR -> 2.52 EUR (-2.7%) [pojeftinilo]
 ntl - SVETI ROK D.O.O. (VODA PRIRODNA IZVORSKA 7L SVETI ROK): 2.01 EUR -> 2.05 EUR (+2.0%) [poskupjelo]
