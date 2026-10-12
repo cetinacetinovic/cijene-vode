@@ -618,6 +618,7 @@
     tierBrand:"", tierVol:"",
     promoFilterBrand:"", promoFilterVol:"",
     popularBrand:"", popularChain:"", focusMode:"all",
+    changesScope:"popular", changesExpanded:false,
     growthBrand:"", growthVol:"", growthHold:3, growthMetric:"pct", growthScope:"changed",
     growthFrom: DATES[0], growthTo: DATES[DATES.length-1] };
   let CUR_DATE_FROM_IDX = 0;
@@ -1211,6 +1212,91 @@
     const names = missing.map(chainLabel);
     const shown = names.length>3 ? names.slice(0,3).join(', ')+' i još '+(names.length-3) : names.join(', ');
     return `<br><span title="${escapeHtml('Ti lanci nisu objavili cijene tog dana, pa nisu uključeni u prosjek. Njihove zadnje cijene i dalje se prikazuju u tablicama.')}" style="text-decoration:underline dotted; text-underline-offset:2px; cursor:help;">${escapeHtml(shown)} nije objavio cijene tog dana</span>`;
+  }
+
+  // ---- "Što se promijenilo od jučer" ----
+  // What changed in the latest daily snapshot: for every article priced on the
+  // shown day, its previous filed price. A chain that skips a day is compared to
+  // whenever it last reported (the row then says which day that was), so a gap in
+  // one chain's feed doesn't silently hide a real price move.
+  const CHANGE_MIN_DIFF = 0.01;      // EUR - below this it's rounding, not a change
+  const CHANGES_PREVIEW = 15;
+  function dailyChanges(dayIdx){
+    const out = [];
+    obsByProduct.forEach((list, pi)=>{
+      if(SHADOW_LISTINGS.has(pi)) return;
+      if(state.volumes.size>0 && !state.volumes.has(PRODUCT_VOLUME_KEY[pi])) return;
+      if(state.q && !stripDia(PRODUCTS[pi][1]+' '+PRODUCTS[pi][2]).includes(state.q)) return;
+      if(state.changesScope==='popular' && !POPULAR_BRANDS_SET.has(PRODUCT_BRAND[pi])) return;
+      const upto = list.filter(r=> r[0] <= dayIdx);
+      if(upto.length < 2) return;
+      const last = upto[upto.length-1];
+      if(last[0] !== dayIdx) return;                // not priced on the shown day
+      const prev = upto[upto.length-2];
+      if(prev[0] === last[0]) return;               // same day filed twice
+      const now = shelfPrice(last), before = shelfPrice(prev);
+      if(!(now > 0) || !(before > 0)) return;
+      const diff = now - before;
+      if(Math.abs(diff) < CHANGE_MIN_DIFF) return;
+      out.push({ pi, chain: PRODUCTS[pi][0], name: PRODUCTS[pi][1], before, now, diff,
+        pct: diff/before*100, prevIdx: prev[0], onPromo: obsOnPromo(last), wasPromo: obsOnPromo(prev) });
+    });
+    out.sort((a,b)=> Math.abs(b.pct)-Math.abs(a.pct));
+    return out;
+  }
+  function renderDailyChanges(){
+    const wrap = document.getElementById('changesWrap');
+    const note = document.getElementById('changesNote');
+    const more = document.getElementById('changesMore');
+    // Weekends are thin: on a Sunday only ~20 of 27 chains file prices and nothing
+    // moves. Rather than show an empty panel, fall back to the most recent day that
+    // did have changes and say so.
+    let dayIdx = CUR_DATE_IDX;
+    let rows = dailyChanges(dayIdx);
+    let fellBack = false;
+    for(let back=1; rows.length===0 && back<=7 && dayIdx-back>=0; back++){
+      rows = dailyChanges(CUR_DATE_IDX-back);
+      if(rows.length){ dayIdx = CUR_DATE_IDX-back; fellBack = true; }
+    }
+    const dayIso = DATES[dayIdx];
+    const prevDayIso = dayIdx > 0 ? DATES[dayIdx-1] : null;
+    if(rows.length===0){
+      wrap.innerHTML = `<div class="empty">Nijedna cijena se nije promijenila u zadnjih tjedan dana.</div>`;
+      note.textContent = '';
+      more.hidden = true;
+      return;
+    }
+    const up = rows.filter(r=>r.diff>0).length, down = rows.length - up;
+    note.textContent = (fellBack ? `Na ${fmtDate(DATES[CUR_DATE_IDX])} nije bilo promjena · zadnje promjene: ` : '')
+      + `${prevDayIso ? fmtDateShort(prevDayIso)+' → ' : ''}${fmtDate(dayIso)} · `
+      + `${up} ${pluralHr(up,'artikl poskupio','artikla poskupjela','artikala poskupjelo')} · `
+      + `${down} ${pluralHr(down,'artikl pojeftinio','artikla pojeftinila','artikala pojeftinilo')}`;
+
+    const shown = state.changesExpanded ? rows : rows.slice(0, CHANGES_PREVIEW);
+    let html = '<table class="matrix"><thead><tr>'
+      + '<th class="brand-head">Artikl</th><th>Lanac</th><th class="num">Prije</th><th class="num">Sada</th><th class="num">Promjena</th>'
+      + '</tr></thead><tbody>';
+    shown.forEach(r=>{
+      const cls = r.diff>0 ? 'delta-up' : 'delta-down';
+      const arrow = r.diff>0 ? '▲' : '▼';
+      const tag = r.onPromo ? ' <span class="pl-promo">akcija</span>' : (r.wasPromo ? ' <span class="chg-note">kraj akcije</span>' : '');
+      // only say the date when it is not simply the day before
+      const stale = (prevDayIso && DATES[r.prevIdx] !== prevDayIso) ? `<span class="chg-note"> (${fmtDateShort(DATES[r.prevIdx])})</span>` : '';
+      html += `<tr><td class="brand-cell">${escapeHtml(brandLabel(PRODUCT_BRAND[r.pi]))}`
+        + ` <span class="focus-vol"><span class="focus-dot">· </span>${escapeHtml(volumeBucketLabel(PRODUCT_VOLUME_KEY[r.pi]))}</span>`
+        + `<span class="chg-name"><span class="chg-chain">${chainLabel(r.chain)} · </span>${escapeHtml(r.name)}</span></td>`
+        + `<td>${chainLabel(r.chain)}</td>`
+        + `<td class="num">${fmtEUR(r.before)}${stale}</td>`
+        + `<td class="num">${fmtEUR(r.now)}${tag}</td>`
+        + `<td class="num"><span class="delta-pill ${cls}">${arrow} ${Math.abs(r.pct).toFixed(1)}%</span></td></tr>`;
+    });
+    html += '</tbody></table>';
+    wrap.innerHTML = html;
+
+    more.hidden = rows.length <= CHANGES_PREVIEW;
+    more.textContent = state.changesExpanded
+      ? `Prikaži samo ${CHANGES_PREVIEW} najvećih`
+      : `Prikaži sve (${rows.length})`;
   }
 
   function renderHero(matchIdxs){
@@ -2641,6 +2727,18 @@
       + `<span>plići → dublji (do ${Math.round(maxDepth*100)}%)</span>`;
   }
 
+  document.getElementById('changesScopeTabs').addEventListener('click', (e)=>{
+    const btn = e.target.closest('.tab-btn'); if(!btn) return;
+    state.changesScope = btn.dataset.scope;
+    state.changesExpanded = false;
+    document.querySelectorAll('#changesScopeTabs .tab-btn').forEach(b=>
+      b.setAttribute('aria-selected', b.dataset.scope===state.changesScope?'true':'false'));
+    renderDailyChanges();
+  });
+  document.getElementById('changesMore').addEventListener('click', ()=>{
+    state.changesExpanded = !state.changesExpanded;
+    renderDailyChanges();
+  });
   document.getElementById('focusModeTabs').addEventListener('click', (e)=>{
     const btn = e.target.closest('.tab-btn'); if(!btn) return;
     state.focusMode = btn.dataset.mode;
@@ -2689,6 +2787,7 @@
     CUR_DATE_IDX = toIdx>=0 ? toIdx : DATES.length-1;
     const matchIdxs = getMatchingProductIdxs();
     renderHero(matchIdxs);
+    renderDailyChanges();
     renderBrandsChart(matchIdxs);
     renderChainsChart(matchIdxs);
     renderPromoMatrix(promoMatrixIdxs());

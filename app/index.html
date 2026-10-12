@@ -480,6 +480,10 @@
   /* the main product table gets the same treatment */
   table#tbl tbody tr:nth-child(even) td, table#tblPopular tbody tr:nth-child(even) td{ background:var(--zebra); }
 
+  .chg-name{ display:block; font-size:11.5px; color:var(--ink-muted); white-space:normal; max-width:280px; margin-top:2px; }
+  .chg-note{ font-size:11px; color:var(--ink-muted); font-family:"IBM Plex Sans",sans-serif; }
+  .chg-chain{ display:none; }   /* own column on a wide screen; see the mobile block */
+
   /* ===== mobitel ===== */
   @media (max-width:640px){
     /* the page and card paddings added up to leave tables only ~277px of a 375px screen */
@@ -516,6 +520,13 @@
     .focus-vol{ display:block; white-space:nowrap; }
     .focus-dot{ display:none; }
 
+    /* changes table: the chain moves under the article so "Sada" and "Promjena",
+       the two columns the table exists for, stay on screen */
+    #changesWrap th:nth-child(2), #changesWrap td:nth-child(2){ display:none; }
+    .chg-chain{ display:inline; color:var(--ink-2); font-weight:500; }
+    .chg-name{ max-width:150px; font-size:11px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+    #changesWrap th, #changesWrap td{ padding:7px 5px; }
+
     /* product lists: drop Tip and Veličina (the size is in the name anyway) so the
        price and its 90-day change fit on screen next to the product */
     #tbl th:nth-child(3), #tbl td:nth-child(3), #tbl th:nth-child(4), #tbl td:nth-child(4),
@@ -536,6 +547,7 @@
 
   <nav class="secnav" aria-label="Dijelovi stranice">
     <span class="secnav-label">Skoči na</span>
+    <a href="#sec-promjene">00 · Promjene od jučer</a>
     <a href="#sec-fokus">01 · Marke u dućanima</a>
     <a href="#sec-razine">02 · Razine cijena</a>
     <a href="#sec-filteri">03 · Filteri i grafovi</a>
@@ -546,6 +558,22 @@
   </nav>
 
   <div class="hero" id="hero"></div>
+
+  <div class="panel" id="sec-promjene">
+    <div class="panel-head hd">
+      <div class="panel-heading"><span class="sec-badge">00</span><div>
+        <span class="panel-title">Što se promijenilo od jučer</span>
+        <span class="panel-purpose">Artikli kojima se cijena promijenila u zadnjoj dnevnoj snimci, najveća promjena prva.</span>
+      </div></div>
+      <div class="chart-tabs" id="changesScopeTabs">
+        <button class="tab-btn" data-scope="popular" aria-selected="true">Popularne marke</button>
+        <button class="tab-btn" data-scope="all" aria-selected="false">Svi artikli</button>
+      </div>
+    </div>
+    <span class="panel-note" id="changesNote" style="display:block;margin:-6px 0 10px;"></span>
+    <div class="table-wrap" id="changesWrap"></div>
+    <button type="button" class="preset-chip" id="changesMore" hidden style="margin-top:10px;"></button>
+  </div>
 
   <div class="quick-filter">
     <span class="quick-filter-label">Veličina:</span>

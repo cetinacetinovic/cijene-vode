@@ -348,8 +348,26 @@ foreach ($chain in $chainFolders) {
     }
   } finally { $sr.Close() }
 
+  # Dva razlicita product_id-a istog lanca znaju imati isti naziv i praznu kolicinu
+  # (Studenac, KTC, Lorenco, Ribola...), pa padnu na isti nas artikl. Spoji im
+  # poslovnice PRIJE agregacije: inace isti artikl dobije DVA zapisa za isti dan,
+  # a prikaz onda nasumicno uzme jedan od njih (npr. Ribola Cetina 15 l je
+  # istovremeno imala 6,12 i 7,49 EUR istog dana).
+  $byKey = @{}
   foreach ($prodId in $agg.Keys) {
-    $rows = $agg[$prodId]
+    $rowsForId = $agg[$prodId]
+    if ($rowsForId.Count -eq 0) { continue }
+    $pInfo = $waterProducts[$prodId]
+    $pKey = $chain + '|' + $pInfo.name + '|' + $pInfo.qty
+    if (-not $byKey.ContainsKey($pKey)) {
+      $byKey[$pKey] = [pscustomobject]@{ info = $pInfo; rows = [System.Collections.ArrayList]::new() }
+    }
+    foreach ($r in $rowsForId) { [void]$byKey[$pKey].rows.Add($r) }
+  }
+
+  foreach ($key in $byKey.Keys) {
+    $info = $byKey[$key].info
+    $rows = $byKey[$key].rows
     if ($rows.Count -eq 0) { continue }
     $prices = $rows | ForEach-Object { $_.price }
     $avg = [math]::Round((($prices | Measure-Object -Sum).Sum / $rows.Count), 4)
@@ -374,8 +392,6 @@ foreach ($chain in $chainFolders) {
       $anchorPrice = [math]::Round((($bestGroup.Group | ForEach-Object { $_.anchor } | Measure-Object -Average).Average), 4)
     }
 
-    $info = $waterProducts[$prodId]
-    $key = $chain + '|' + $info.name + '|' + $info.qty
     $isNewProduct = -not $productIndex.ContainsKey($key)
     if (-not $isNewProduct) {
       $prodIdx = $productIndex[$key]
@@ -419,7 +435,7 @@ foreach ($chain in $chainFolders) {
     [void]$obs.Add(@($obsRow.ToArray()))
     $newObsCount++
   }
-  Write-Host ("  {0}: {1} artikala vode, {2} agregiranih zapisa" -f $chain, $waterProducts.Count, $agg.Count)
+  Write-Host ("  {0}: {1} artikala vode, {2} agregiranih zapisa" -f $chain, $waterProducts.Count, $byKey.Count)
 }
 
 $zip.Dispose()
