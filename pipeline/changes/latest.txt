@@ -1,11 +1,7 @@
-﻿Promjene cijena za 2026-10-10 (10 artikala):
+﻿Promjene cijena za 2026-10-11 (6 artikala):
 studenac - AWT-RADENSKA (VODA GAZ. RADENSKA): 1.42 EUR -> 1.05 EUR (-26.1%) [pojeftinilo]
 ribola - CETINA (VODA CETINA 15 l NEGAZIRANA): 6.12 EUR -> 7.49 EUR (+22.4%) [poskupjelo]
-lorenco -  (MIN.VODA 1,5L JAMNICA): 0.84 EUR -> 0.66 EUR (-21.4%) [pojeftinilo]
 tommy - JAMNICA PLUS D.O.O. (VODA NEGAZ.0,33 L JANA PET): 0.75 EUR -> 0.62 EUR (-17.3%) [pojeftinilo]
-gavranovic - AWT INTERNATIONAL d.o.o. (STUDENAC 1,5L MINERALNA VODA): 0.89 EUR -> 1.02 EUR (+14.6%) [poskupjelo]
-gavranovic - AWT INTERNATIONAL d.o.o. (STUDENA 1,5L IZVORSKA VODA): 0.89 EUR -> 0.99 EUR (+11.2%) [poskupjelo]
-lorenco -  (CETINA PRIRODNA VODA NEGAZIRANA 7L): 1.85 EUR -> 2.01 EUR (+8.6%) [poskupjelo]
 bure -  (VODA CETINA 7 L): 1.75 EUR -> 1.90 EUR (+8.6%) [poskupjelo]
 trgovina-krk -  (VODA IZVORSKA CETINA 7 l): 2.59 EUR -> 2.52 EUR (-2.7%) [pojeftinilo]
 ntl - SVETI ROK D.O.O. (VODA PRIRODNA IZVORSKA 7L SVETI ROK): 2.01 EUR -> 2.05 EUR (+2.0%) [poskupjelo]
