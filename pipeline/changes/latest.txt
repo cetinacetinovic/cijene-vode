@@ -1,5 +1,2 @@
-﻿Promjene cijena za 2026-10-12 (4 artikala):
-plodine - ELAN (VODA ELAN GAZIRANA 0,5 L): 0.27 EUR -> 0.37 EUR (+37.0%) [poskupjelo]
-boso - VERA NATURALE (VODA VERA NAT.500 ml GAZ.PVC): 0.49 EUR -> 0.36 EUR (-26.5%) [pojeftinilo]
-vrutak - JAMNICA (N-*VODA KISELJAK 1.50L -6/1-): 0.89 EUR -> 0.75 EUR (-15.7%) [pojeftinilo]
-jadranka_trgovina -  (VODA NEG.1,5L JAMNICA MILD): 1.02 EUR -> 0.95 EUR (-6.9%) [pojeftinilo]
+﻿Promjene cijena za 2026-10-13 (1 artikala):
+plodine - ELAN (VODA ELAN GAZIRANA 0,5 L): 0.37 EUR -> 0.27 EUR (-27.0%) [pojeftinilo]
