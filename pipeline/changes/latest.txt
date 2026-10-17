@@ -1,13 +1,4 @@
-﻿Promjene cijena za 2026-10-15 (12 artikala):
-boso - LEDA (VODA LEDA 1,5 L NEGAZIRANA): 0.83 EUR -> 0.52 EUR (-37.3%) [pojeftinilo]
-tommy - JAMNICA (VODA GAZ.1 L JAMNICA PET): 0.79 EUR -> 0.92 EUR (+16.5%) [poskupjelo]
-tommy - STUDENA (VODA NEGAZ.0,5 L STUDENA PET): 0.69 EUR -> 0.79 EUR (+14.5%) [poskupjelo]
-gavranovic - JAMNICA plus d.o.o. (VODA SARA 1,5L): 0.75 EUR -> 0.85 EUR (+13.3%) [poskupjelo]
-tommy - STUDENA (VODA NEGAZ.0,75 L STUDENA PET): 0.85 EUR -> 0.75 EUR (-11.8%) [pojeftinilo]
-gavranovic - JAMNICA plus d.o.o. (VODA JAMNICA 1L STAKLO): 0.85 EUR -> 0.75 EUR (-11.8%) [pojeftinilo]
-gavranovic - JAMNICA plus d.o.o. (VODA MIVELA MG GAZIRANA 1L): 1.79 EUR -> 1.59 EUR (-11.2%) [pojeftinilo]
-gavranovic - JAMNICA plus d.o.o. (VODA MIVELA MG BLAGO GAZIRANA 1L): 1.79 EUR -> 1.59 EUR (-11.2%) [pojeftinilo]
-gavranovic - AWT INTERNATIONAL d.o.o. (RADENSKA MINERALNA VODA CLASSIC 1,5L PET): 0.89 EUR -> 0.99 EUR (+11.2%) [poskupjelo]
-jadranka_trgovina -  (VODA GAZ.1,5L JAMNICA 4 PACK ×1,5): 4.11 EUR -> 3.69 EUR (-10.2%) [pojeftinilo]
-tommy - STUDENA (VODA NEGAZ.0,25 L STUDENA PET): 0.59 EUR -> 0.65 EUR (+10.2%) [poskupjelo]
-gavranovic - JAMNICA plus d.o.o. (VODA JAMNICA 4x1,5L PET): 3.99 EUR -> 4.39 EUR (+10.0%) [poskupjelo]
+﻿Promjene cijena za 2026-10-16 (3 artikala):
+ntl - NATURALIS D.O.O. (VODA GAZIRANA PRIRODNA MINERALNA DINARA 1,5 L PET): 0.82 EUR -> 0.69 EUR (-15.9%) [pojeftinilo]
+ntl - AWT INTERNATIONAL D.O.O (VODA RADENSKA KRALJEVI VRELEC 1L RGB): 0.98 EUR -> 0.95 EUR (-3.1%) [pojeftinilo]
+ntl - NARDUM D.O.O. (VODA GAZIRANA MINERALNA TILEA 1,5L PET): 0.88 EUR -> 0.87 EUR (-1.1%) [pojeftinilo]
